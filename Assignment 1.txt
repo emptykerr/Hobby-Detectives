@@ -1,0 +1,109 @@
+enum PlayerName { Lucilla, Bert, Malina, Percy };
+enum WeaponName { Broom, Scissors, Knife, Shovel, iPad };
+enum EstateName { HauntedHouse, ManicManor, VisitationVilla, CalamityCastle, PerilPalace };
+
+class HobbyDetectives
+{
+  * -> * Square board; 
+  * -> 3 Card solution;
+  * -> 4 Player players;
+  * -> 2 Die dice;
+  int playerCount;
+  PlayerName currentTurn;
+  enum GameState { START, ONGOING, GUESS, WON, LOST };
+  GameState state;
+  
+  void setup() {};
+  void createBoard() {};
+  void loop() {};
+  void solveAttempt() {};
+  void playerTurn() {
+    int moves = 0;
+    for (Die d : dice) {
+      moves += d.roll();
+    }
+    while (moves > 0) {
+      moves--;
+    }
+  }
+}
+
+class Player
+{
+  * -> 1 Square square;
+  * -> 0..1 Estate estate;
+  * -> * Card hand;
+  enum State { PLAYING, ELIMINATED };
+  PlayerName name;
+}
+
+class ComputerPlayer
+{
+    isA Player;
+}
+
+class Square
+{
+  * -> 4 Wall walls;
+  * -> 0..1 Estate estate;
+}
+
+class Estate
+{
+  * -> * Square squares;
+  * -> 0..1 Weapon weapon;
+  * -> 0..4 Player players;
+  EstateName name;
+}
+
+class Wall
+{
+  enum Direction { North, East, South, West };
+  Direction direction;
+}
+
+class Weapon
+{
+  * -> 1 Estate estate;
+  WeaponName name;
+}
+
+interface Card
+{
+  String getCardName();
+}
+
+class EstateCard
+{
+  isA Card;
+  EstateName name;
+  String getCardName() {
+    return name.toString();
+  }
+}
+
+class PlayerCard
+{
+  isA Card;
+  PlayerName name;
+  String getCardName() {
+    return name.toString();
+  }
+}
+
+class WeaponCard
+{
+  isA Card;
+  WeaponName name;
+  String getCardName() {
+    return name.toString();
+  }
+}
+
+class Die {
+  int value;
+  int roll() {
+    value = (int) (Math.random() * 6) + 1;
+    return value;
+  }
+}
