@@ -3,16 +3,21 @@
 
 - [x] Create TODO list
 - [x] Create CRC Cards
-- [ ] Build base UML diagram
-- [ ] Board
-- [ ] Player
-  - [ ] AIPlayer
-- [ ] Estate
-- [ ] Characters
-- [ ] Weapons
-- [ ] Rules
-- [ ] User interface
-  - [ ] Player controls
+- [x] Create java files to add to git
+
+# Example Class
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Example Class
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
 
 # Example Class
 
