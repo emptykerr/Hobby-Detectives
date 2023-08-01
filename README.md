@@ -5,21 +5,63 @@
 - [x] Create CRC Cards
 - [x] Create java files to add to git
 
-# Example Class
+# HobbyDetectives
 
 | Method (Params) | Description | Input | Output | Who | Done |
 | --------------- | ----------- | ----- | ------ | --- | ---- |
 |                 |             |       |        |     | ✅   |
 |                 |             |       |        |     | ✅   |
 
-# Example Class
+# Player
 
 | Method (Params) | Description | Input | Output | Who | Done |
 | --------------- | ----------- | ----- | ------ | --- | ---- |
 |                 |             |       |        |     | ✅   |
 |                 |             |       |        |     | ✅   |
 
-# Example Class
+# ComputerPlayer
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Square
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Estate
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Wall
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Weapon
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Card
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
+
+# Die
 
 | Method (Params) | Description | Input | Output | Who | Done |
 | --------------- | ----------- | ----- | ------ | --- | ---- |
