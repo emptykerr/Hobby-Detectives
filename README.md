@@ -3,6 +3,7 @@
 
 - [x] Create TODO list
 - [x] Create CRC Cards
+- [ ] Finish Class/Method tables
 - [ ] Create java files to add to git
 
 # HobbyDetectives
