@@ -4,10 +4,10 @@ enum EstateName { HauntedHouse, ManicManor, VisitationVilla, CalamityCastle, Per
 
 class HobbyDetectives
 {
-  * -> * Square board; 
-  * -> 3 Card solution;
-  * -> 4 Player players;
-  * -> 2 Die dice;
+  * -> * Square; 
+  Guess solution;
+  * -> 4 Player;
+  * -> 2 Die;
   int playerCount;
   PlayerName currentTurn;
   enum GameState { START, ONGOING, GUESS, WON, LOST };
@@ -16,56 +16,55 @@ class HobbyDetectives
   void setup() {};
   void createBoard() {};
   void loop() {};
-  void solveAttempt() {};
-  void playerTurn() {
-    int moves = 0;
-    for (Die d : dice) {
-      moves += d.roll();
-    }
-    while (moves > 0) {
-      moves--;
-    }
+  ;
   }
-}
 
 class Player
 {
-  * -> 1 Square square;
-  * -> 0..1 Estate estate;
-  * -> * Card hand;
+  * -> 1 Character;
+  0..1 -- 1 Square;
+  * -> * Card;
   enum State { PLAYING, ELIMINATED };
-  PlayerName name;
+  PlayerState state;
+public Card revealCard(Guess guess){
 }
 
-class ComputerPlayer
-{
-    isA Player;
+public void doTurn(Die roll) {}
+  
+public Boolean makeSolveAttempt(Guess guess){
+}
+public Card makeGuess() {
+}
+}
+
+class Character {
+  public Square move(){
+  }
 }
 
 class Square
 {
-  * -> 4 Wall walls;
-  * -> 0..1 Estate estate;
+  * -> 0..1 Character;
+  * -> 4 Wall;
+  * -- 0..1 Estate;
+  
+}
+
+class Weapon {
+  String name;
 }
 
 class Estate
 {
-  * -> * Square squares;
-  * -> 0..1 Weapon weapon;
-  * -> 0..4 Player players;
-  EstateName name;
+  1 -- 0..1 Weapon;
+  * -- 0..4 Character;
+  String name;
 }
 
 class Wall
 {
   enum Direction { North, East, South, West };
   Direction direction;
-}
-
-class Weapon
-{
-  * -> 1 Estate estate;
-  WeaponName name;
 }
 
 interface Card
@@ -76,14 +75,16 @@ interface Card
 class EstateCard
 {
   isA Card;
+  1 -- 1 Estate;
   EstateName name;
   String getCardName() {
     return name.toString();
   }
 }
 
-class PlayerCard
+class CharacterCard
 {
+  1 -- 1 Character;
   isA Card;
   PlayerName name;
   String getCardName() {
@@ -94,6 +95,7 @@ class PlayerCard
 class WeaponCard
 {
   isA Card;
+  1 -- 1 Weapon;
   WeaponName name;
   String getCardName() {
     return name.toString();
@@ -106,4 +108,110 @@ class Die {
     value = (int) (Math.random() * 6) + 1;
     return value;
   }
+}
+class Guess
+{
+  * -> 1 CharacterCard;
+  * -> 1 WeaponCard;
+  * -> 1 EstateCard;
+}
+//$?[End_of_model]$?
+
+namespace -;
+
+
+class HobbyDetectives
+{
+  position 590 13 109 195.273;
+  position.association Card:solution__HobbyDetectives 0,68 195,50;
+  position.association Die:dice__HobbyDetectives 0,23 110,14;
+  position.association HobbyDetectives__Square:board 0,10 110,0;
+  position.association HobbyDetectives__Player:players 0,10 0,0;
+  position.association HobbyDetectives__Player 0,10 7,0;
+  position.association Die__HobbyDetectives 0,10 110,10;
+  position.association HobbyDetectives__Square 0,10 110,2;
+}
+
+class Player
+{
+  position 438 243 283.659 127.982;
+  position.association Card:hand__Player 133,0 194,93;
+  position.association Player__Square:square 0,57 110,4;
+  position.association Estate:estate__Player 0,10 12,0;
+  position.association Player:player__Square:square 0,10 110,10;
+  position.association Character:character__Player 279,128 20,0;
+  position.association Character__Player 71,128 0,10;
+  position.association Player:player__Square 0,10 110,10;
+  position.association Player__Square 0,10 110,10;
+}
+
+class Square
+{
+  position 190 275 109 60.6901;
+  position.association Square__Wall:walls 106,0 32,58;
+  position.association Estate:estate__Square 89,61 4,0;
+  position.association Estate__Square 93,61 6,0;
+  position.association Character:character__Square 110,11 0,10;
+  position.association Character__Square 110,10 0,10;
+  position.association Square__Wall 30,0 114,78;
+}
+
+class Estate
+{
+  position 241 412 112.565 77.513;
+  position.association Estate__Square:squares 0,17 110,37;
+  position.association Estate__Weapon:weapon 0,29 113,23;
+  position.association Estate__Player:players 35,0 0,30;
+  position.association Estate__Weapon 0,11 113,7;
+  position.association Estate__Player 15,0 0,10;
+  position.association Character:characters__Estate 113,11 0,10;
+  position.association Character__Estate 113,28 0,10;
+}
+
+class Wall
+{
+  position 147 151 152.682 77.513;
+}
+
+class EstateCard
+{
+  position 814 250 194.622 94.3359;
+  position.association Estate__EstateCard 0,10 35,0;
+}
+
+class WeaponCard
+{
+  position 800 351 194.622 150.82;
+  position.association Weapon__WeaponCard 0,10 110,0;
+}
+
+class Die
+{
+  position 361 17 109 94.3359;
+}
+
+class Guess
+{
+  position 67 41 109 60.6901;
+  position.association Guess__Player 109,61 0,47;
+  position.association EstateCard__Guess 110,10 0,10;
+  position.association Guess__PlayerCard 110,10 0,10;
+  position.association Guess__WeaponCard 110,10 0,10;
+  position.association CharacterCard__Guess 110,25 0,10;
+}
+
+class Character
+{
+  position 543 417 146.628 77.513;
+}
+
+class Weapon
+{
+  position 63 418 112.565 77.513;
+}
+
+class CharacterCard
+{
+  position 820 126 194.622 94.3359;
+  position.association Character__CharacterCard 0,10 9,0;
 }
