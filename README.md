@@ -15,6 +15,7 @@
 | gameLoop()      |             |       |        |     |      |
 | solveAttempt()  |             |       |        |     |      |
 | playerTurn()    |             |       |        |     |      |
+| test()          |             |       |        |     |      |
 
 # Player
 
@@ -69,5 +70,5 @@
 
 | Method (Params) | Description | Input | Output | Who | Done |
 | --------------- | ----------- | ----- | ------ | --- | ---- |
-|                 |             |       |        |     | ✅   |
-|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     |      |
+|                 |             |       |        |     |      |
