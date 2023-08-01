@@ -1,2 +1,22 @@
 # SWEN225-A1
-Group project for the first swen assignment
+## Todo List
+
+- [x] Create TODO list
+- [x] Create CRC Cards
+- [ ] Build base UML diagram
+- [ ] Board
+- [ ] Player
+  - [ ] AIPlayer
+- [ ] Estate
+- [ ] Characters
+- [ ] Weapons
+- [ ] Rules
+- [ ] User interface
+  - [ ] Player controls
+
+# Example Class
+
+| Method (Params) | Description | Input | Output | Who | Done |
+| --------------- | ----------- | ----- | ------ | --- | ---- |
+|                 |             |       |        |     | ✅   |
+|                 |             |       |        |     | ✅   |
