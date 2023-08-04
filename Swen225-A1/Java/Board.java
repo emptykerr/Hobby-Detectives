@@ -25,6 +25,7 @@ public class Board {
         for(int y = 0; y < Board.getLength(); y++) {
             for(int x = 0; x < Board.getLength(); x++){
                 Board.getSquare(x, y).draw();
+                System.out.print(" ");
                 System.out.print(HobbyDetectives.RESET + " ");
             }
             System.out.print("\n");

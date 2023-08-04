@@ -5,7 +5,7 @@ public class HobbyDetectives {
     private int playerCount;
     private String playerName;
     private PlayerName currentTurn;
-    private GameState state;
+    public GameState state;
     private Board board;
     private static ArrayList<Player> allPlayers = new ArrayList<>();
     private static ArrayList<Character> allCharacters = new ArrayList<>();
@@ -69,8 +69,39 @@ public class HobbyDetectives {
      */
     public static void main(String[] args){
         HobbyDetectives game = new HobbyDetectives();
+        game.displayWelcomeMessage();
+        game.displayGameRules();
         game.setup();
         game.loop();
+    }
+
+    public void displayWelcomeMessage() {
+        System.out.println("Welcome to Hobby Detectives!");
+        System.out.println("Get ready to solve the mystery...");
+        System.out.println();
+    }
+
+    /**
+     * Display the game rules and instructions on how to play
+     */
+    public void displayGameRules() {
+        System.out.println("Game Rules:");
+        System.out.println("1. Your goal is to solve the mystery of the crime!");
+        System.out.println("2. You will take turns moving around the board, making guesses, and collecting clues.");
+        System.out.println("3. Each player represents a character on the board.");
+        System.out.println("4. The game includes characters, weapons, and estates.");
+        System.out.println("5. You'll need to deduce the correct combination of character, weapon, and estate to solve the mystery.");
+        System.out.println("6. Be the first to make an accurate accusation to win!");
+        System.out.println();
+        System.out.println("How to Play:");
+        System.out.println("- Roll the dice to move your character on the board.");
+        System.out.println("- Enter the direction you want to move (U for Up, R for Right, D for Down, L for Left).");
+        System.out.println("- Explore estates, make guesses about suspects and weapons.");
+        System.out.println("- Use your detective skills to deduce the solution.");
+        System.out.println("- Collect clues from other players by making guesses.");
+        System.out.println("- When you're ready, make an accusation to solve the mystery.");
+        System.out.println("- But be careful, a wrong accusation can lead to defeat!");
+        System.out.println();
     }
 
     /** The setup for the game.
@@ -81,6 +112,7 @@ public class HobbyDetectives {
      * - Matt
      */
     public void setup(){
+        System.out.println("\nAre you ready to begin?");
         initializeEstates();
         initializeBoard();
         initializeDoors();
@@ -239,7 +271,16 @@ public class HobbyDetectives {
             tempDeck.remove(c);
             playerIndex = (playerIndex + 1) % playerCount;
         }
-        // for debugging
+
+    }
+
+    /**
+     * For debugging purposes, display the solution.
+     * Also display each character, and their decks.
+     */
+    private void printCheatAnswers(){
+        System.out.println("\n--------------- CHEAT ANSWERS ---------------");
+        System.out.println("Solution: " + solution.getCharacter().getCardName() + " with the " + solution.getWeapon().getCardName() + " in " + solution.getEstate().getCardName());
         for (Player p : getPlayers()){
             System.out.print(p.getName() + ": ");
             System.out.println(p.getHand().size());
@@ -247,8 +288,9 @@ public class HobbyDetectives {
                 System.out.println(card.getCardName());
             }
         }
-    }
+        System.out.println("--------------- CHEAT ANSWERS ---------------\n");
 
+    }
 
     /**
      * Create weapons and randomly add to estates
@@ -303,7 +345,6 @@ public class HobbyDetectives {
         murderer = (CharacterCard) tempDeck.get(i);
         tempDeck.remove(murderer);
 
-        System.out.println("Solution: " + murderer.getCardName() + " with the " + weapon.getCardName() + " in " + estate.getCardName());
 
         return new Guess(murderer, weapon, estate);
 
@@ -315,6 +356,11 @@ public class HobbyDetectives {
      */
     public void loop(){
         int currentPlayerIndex = 0;
+
+        //for debugging
+        printCheatAnswers();
+
+
         while(state == GameState.ONGOING){ // condition for game loop to run
             Player currentPlayer = allPlayers.get(currentPlayerIndex);
             currentTurn = currentPlayer.getName();
@@ -323,7 +369,20 @@ public class HobbyDetectives {
 
             currentPlayer.getCharacter().startNewRound();
             currentPlayer.doTurn();
+            if(currentPlayer.checkGamestate()){
+                state = GameState.WON;
+            }
             currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+        }
+
+        if(state == GameState.WON){
+            System.out.println("\n------------------------------------------------");
+            System.out.println("\nThe murder mystery has been solved.");
+            Guess solution = getSolution();
+            System.out.println("Solution: " + solution.getCharacter().getCardName() + " with the " + solution.getWeapon().getCardName() + " in " + solution.getEstate().getCardName());
+            System.out.println("It was solved by: " + currentTurn);
+            System.out.println("\n------------------------------------------------");
+
         }
     }
 

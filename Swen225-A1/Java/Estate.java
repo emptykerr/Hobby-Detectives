@@ -27,10 +27,11 @@ public class Estate {
         weapon = w;
     }
 
-    public Weapon removeWeapon(){
 
+    public Weapon getWeapon() {
         return weapon;
     }
+
     public String getName(){
         return name;
     }
