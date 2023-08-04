@@ -1,8 +1,6 @@
-public record EstateCard(String name) implements Card {
-
+public record CharacterCard(String name) implements Card {
     @Override
     public String getCardName() {
         return name();
     }
-
 }

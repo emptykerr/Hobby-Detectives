@@ -1,513 +1,304 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
-
-
 import java.util.*;
 
-// line 6 "model.ump"
-// line 116 "model.ump"
-public class HobbyDetectives
-{
+public class HobbyDetectives {
+    private static Guess solution;
+    private int playerCount;
+    private String playerName;
+    private PlayerName currentTurn;
+    private GameState state;
+    private Board board;
+    private static ArrayList<Player> allPlayers = new ArrayList<>();
+    private static ArrayList<Character> allCharacters = new ArrayList<>();
+    private static ArrayList<Card> allCards = new ArrayList<>();
+    private static ArrayList<Estate> allEstates = new ArrayList<>();
+    private static ArrayList<Weapon> allWeapons = new ArrayList<>();
+    private ArrayList<Card> tempDeck = new ArrayList<>();
 
-  //------------------------
-  // ENUMERATIONS
-  //------------------------
+    public static final Map<String, CharacterCard> characterMap = new HashMap<>();
+    public static final Map<String, WeaponCard> weaponMap = new HashMap<>();
+    public static final Map<String, EstateCard> estateMap = new HashMap<>();
 
-  public enum PlayerName { Lucilla, Bert, Malina, Percy }
-  public enum GameState { START, ONGOING, GUESS, WON, LOST }
+    //COLOURS
+    public static final String RESET = "\033[0m";  // Text Reset
+    public static final String BLACK_BOLD = "\033[1;30m";  // BLACK
+    public static final String RED_BOLD = "\033[1;31m";    // RED
+    public static final String GREEN_BOLD = "\033[1;32m";  // GREEN
+    public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
+    public static final String BLUE_BOLD = "\033[1;34m";   // BLUE
+    public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
+    public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
+    public static final String WHITE_BOLD = "\033[1;37m";  // WHITE
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
-
-  //HobbyDetectives Attributes
-  private int playerCount;
-  private PlayerName currentTurn;
-  private GameState state;
-
-  //HobbyDetectives Associations
-  private List<Square> board;
-  private List<Card> solution;
-  private List<Player> players;
-  private List<Die> dice;
-
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
-
-
-  public HobbyDetectives()
-  {
-
-    playerCount = 4;
-    currentTurn = PlayerName.Lucilla;
-    state = GameState.ONGOING;
-    board = new ArrayList<Square>();
-    solution = new ArrayList<Card>();
-  }
-
-  public HobbyDetectives(int aPlayerCount, PlayerName aCurrentTurn, GameState aState, Card[] allSolution, Player[] allPlayers, Die[] allDice)
-  {
-
-    playerCount = aPlayerCount;
-    currentTurn = aCurrentTurn;
-    state = aState;
-    board = new ArrayList<Square>();
-    solution = new ArrayList<Card>();
-    boolean didAddSolution = setSolution(allSolution);
-    if (!didAddSolution)
-    {
-      throw new RuntimeException("Unable to create HobbyDetectives, must have 3 solution. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    players = new ArrayList<Player>();
-    boolean didAddPlayers = setPlayers(allPlayers);
-    if (!didAddPlayers)
-    {
-      throw new RuntimeException("Unable to create HobbyDetectives, must have 4 players. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    dice = new ArrayList<Die>();
-    boolean didAddDice = setDice(allDice);
-    if (!didAddDice)
-    {
-      throw new RuntimeException("Unable to create HobbyDetectives, must have 2 dice. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-  }
-
-
-  public static void main(String[] args) {
-    HobbyDetectives game = new HobbyDetectives();
-     game.setup();
-      game.createBoard();
-      System.out.println("Hello World!");
-  }
-
-
-
-
-  //------------------------
-  // INTERFACE
-  //------------------------
-
-  public boolean setPlayerCount(int aPlayerCount)
-  {
-    boolean wasSet = false;
-    playerCount = aPlayerCount;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setCurrentTurn(PlayerName aCurrentTurn)
-  {
-    boolean wasSet = false;
-    currentTurn = aCurrentTurn;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setState(GameState aState)
-  {
-    boolean wasSet = false;
-    state = aState;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public int getPlayerCount()
-  {
-    return playerCount;
-  }
-
-  public PlayerName getCurrentTurn()
-  {
-    return currentTurn;
-  }
-
-  public GameState getState()
-  {
-    return state;
-  }
-  /* Code from template association_GetMany */
-  public Square getBoard(int index)
-  {
-    Square aBoard = board.get(index);
-    return aBoard;
-  }
-
-  public List<Square> getBoard()
-  {
-    List<Square> newBoard = Collections.unmodifiableList(board);
-    return newBoard;
-  }
-
-  public int numberOfBoard()
-  {
-    int number = board.size();
-    return number;
-  }
-
-  public boolean hasBoard()
-  {
-    boolean has = board.size() > 0;
-    return has;
-  }
-
-  public int indexOfBoard(Square aBoard)
-  {
-    int index = board.indexOf(aBoard);
-    return index;
-  }
-  /* Code from template association_GetMany */
-  public Card getSolution(int index)
-  {
-    Card aSolution = solution.get(index);
-    return aSolution;
-  }
-
-  public List<Card> getSolution()
-  {
-    List<Card> newSolution = Collections.unmodifiableList(solution);
-    return newSolution;
-  }
-
-  public int numberOfSolution()
-  {
-    int number = solution.size();
-    return number;
-  }
-
-  public boolean hasSolution()
-  {
-    boolean has = solution.size() > 0;
-    return has;
-  }
-
-  public int indexOfSolution(Card aSolution)
-  {
-    int index = solution.indexOf(aSolution);
-    return index;
-  }
-  /* Code from template association_GetMany */
-  public Player getPlayer(int index)
-  {
-    Player aPlayer = players.get(index);
-    return aPlayer;
-  }
-
-  public List<Player> getPlayers()
-  {
-    List<Player> newPlayers = Collections.unmodifiableList(players);
-    return newPlayers;
-  }
-
-  public int numberOfPlayers()
-  {
-    int number = players.size();
-    return number;
-  }
-
-  public boolean hasPlayers()
-  {
-    boolean has = players.size() > 0;
-    return has;
-  }
-
-  public int indexOfPlayer(Player aPlayer)
-  {
-    int index = players.indexOf(aPlayer);
-    return index;
-  }
-  /* Code from template association_GetMany */
-  public Die getDice(int index)
-  {
-    Die aDice = dice.get(index);
-    return aDice;
-  }
-
-  public List<Die> getDice()
-  {
-    List<Die> newDice = Collections.unmodifiableList(dice);
-    return newDice;
-  }
-
-  public int numberOfDice()
-  {
-    int number = dice.size();
-    return number;
-  }
-
-  public boolean hasDice()
-  {
-    boolean has = dice.size() > 0;
-    return has;
-  }
-
-  public int indexOfDice(Die aDice)
-  {
-    int index = dice.indexOf(aDice);
-    return index;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfBoard()
-  {
-    return 0;
-  }
-  /* Code from template association_AddUnidirectionalMany */
-  public boolean addBoard(Square aBoard)
-  {
-    boolean wasAdded = false;
-    if (board.contains(aBoard)) { return false; }
-    board.add(aBoard);
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeBoard(Square aBoard)
-  {
-    boolean wasRemoved = false;
-    if (board.contains(aBoard))
-    {
-      board.remove(aBoard);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addBoardAt(Square aBoard, int index)
-  {  
-    boolean wasAdded = false;
-    if(addBoard(aBoard))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfBoard()) { index = numberOfBoard() - 1; }
-      board.remove(aBoard);
-      board.add(index, aBoard);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveBoardAt(Square aBoard, int index)
-  {
-    boolean wasAdded = false;
-    if(board.contains(aBoard))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfBoard()) { index = numberOfBoard() - 1; }
-      board.remove(aBoard);
-      board.add(index, aBoard);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addBoardAt(aBoard, index);
-    }
-    return wasAdded;
-  }
-  /* Code from template association_RequiredNumberOfMethod */
-  public static int requiredNumberOfSolution()
-  {
-    return 3;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfSolution()
-  {
-    return 3;
-  }
-  /* Code from template association_MaximumNumberOfMethod */
-  public static int maximumNumberOfSolution()
-  {
-    return 3;
-  }
-  /* Code from template association_SetUnidirectionalN */
-  public boolean setSolution(Card... newSolution)
-  {
-    boolean wasSet = false;
-    ArrayList<Card> verifiedSolution = new ArrayList<Card>();
-    for (Card aSolution : newSolution)
-    {
-      if (verifiedSolution.contains(aSolution))
-      {
-        continue;
-      }
-      verifiedSolution.add(aSolution);
+    public HobbyDetectives(){
+       //initialize fields and perform necessary setup
+        playerCount = 4;
+        //players = new Player[]{PlayerName.Lucilla, PlayerName.Bert, PlayerName.Percy, PlayerName.Malina};
     }
 
-    if (verifiedSolution.size() != newSolution.length || verifiedSolution.size() != requiredNumberOfSolution())
-    {
-      return wasSet;
+    public enum PlayerName{
+        Lucilla, Bert, Percy, Malina;
+        public static Map<String, PlayerName> playerNameMap = Map.of("lucilla", Lucilla, "bert", Bert, "percy", Percy, "malina", Malina);
+    }
+    public enum WeaponName {
+        Broom, Scissors, Knife, Shovel, iPad;
+        public static Map<String, WeaponName> weaponNameMap = Map.of("broom", Broom, "scissors", Scissors, "knife", Knife, "shovel", Shovel, "ipad", iPad);
+    }
+    public enum EstateName {
+        HauntedHouse, ManicManor, VisitationVilla, PerilPalace, CalamityCastle;
+        public static Map<String, EstateName> estateNameMap = Map.of("haunted house", HauntedHouse, "manic manor", ManicManor, "visitation villa", VisitationVilla, "peril palace", PerilPalace, "calamity castle", CalamityCastle);
+        @Override
+        public String toString() {
+            return switch (this) {
+                case HauntedHouse -> "Haunted House";
+                case ManicManor -> "Manic Manor";
+                case VisitationVilla -> "Visitation Villa";
+                case PerilPalace -> "Peril Palace";
+                case CalamityCastle -> "Calamity Castle";
+            };
+        }
     }
 
-    solution.clear();
-    solution.addAll(verifiedSolution);
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_RequiredNumberOfMethod */
-  public static int requiredNumberOfPlayers()
-  {
-    return 4;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfPlayers()
-  {
-    return 4;
-  }
-  /* Code from template association_MaximumNumberOfMethod */
-  public static int maximumNumberOfPlayers()
-  {
-    return 4;
-  }
-  /* Code from template association_SetUnidirectionalN */
-  public boolean setPlayers(Player... newPlayers)
-  {
-    boolean wasSet = false;
-    ArrayList<Player> verifiedPlayers = new ArrayList<Player>();
-    for (Player aPlayer : newPlayers)
-    {
-      if (verifiedPlayers.contains(aPlayer))
-      {
-        continue;
-      }
-      verifiedPlayers.add(aPlayer);
+    enum GameState{START, ONGOING, GUESS, WON, LOST}
+    /**
+     * Main method
+     * initializes the game object
+     * setups up the game
+     * runs game loop
+     * @param args
+     * - Matt
+     */
+    public static void main(String[] args){
+        HobbyDetectives game = new HobbyDetectives();
+        game.setup();
+        game.loop();
     }
 
-    if (verifiedPlayers.size() != newPlayers.length || verifiedPlayers.size() != requiredNumberOfPlayers())
-    {
-      return wasSet;
+    /** The setup for the game.
+     * Shuffles the cards.
+     * Distributes each card to each player
+     * Allows player selection
+     * Initializes all elements
+     * - Matt
+     */
+    public void setup(){
+        initializeEstates();
+        initializeBoard();
+        initializeDoors();
+        initializeCards();
+        initializeCharacters();
+        initializePlayers();
+        distributeCards();
+        initializeWeapons();
+        state = GameState.ONGOING;
     }
 
-    players.clear();
-    players.addAll(verifiedPlayers);
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_RequiredNumberOfMethod */
-  public static int requiredNumberOfDice()
-  {
-    return 2;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfDice()
-  {
-    return 2;
-  }
-  /* Code from template association_MaximumNumberOfMethod */
-  public static int maximumNumberOfDice()
-  {
-    return 2;
-  }
-  /* Code from template association_SetUnidirectionalN */
-  public boolean setDice(Die... newDice)
-  {
-    boolean wasSet = false;
-    ArrayList<Die> verifiedDice = new ArrayList<Die>();
-    for (Die aDice : newDice)
-    {
-      if (verifiedDice.contains(aDice))
-      {
-        continue;
-      }
-      verifiedDice.add(aDice);
+    /**
+     * Create estates
+     */
+    private void initializeEstates(){
+        allEstates.add(new Estate("Haunted House", 2, 2, 5, 5));
+        allEstates.add(new Estate("Manic Manor", 17, 2, 5, 5));
+        allEstates.add(new Estate("Calamity Castle", 2, 17, 5, 5));
+        allEstates.add(new Estate("Peril Palace", 17, 17, 5, 5));
+        allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
     }
 
-    if (verifiedDice.size() != newDice.length || verifiedDice.size() != requiredNumberOfDice())
-    {
-      return wasSet;
+    public void initializeBoard() {
+        board = new Board();
+        for (int x = 0; x < board.getLength(); x++) {
+            for (int y = 0; y < board.getLength(); y++) {
+                Square square = new Square(x, y);
+                board.addSquare(square, x, y);
+                for (Estate e : allEstates){
+                    if (e.squarePartOfEstate(square) != null) {
+                        square.setBlocked(true);
+                        square.setEstate(e);
+                    }
+                }
+            }
+        }
     }
 
-    dice.clear();
-    dice.addAll(verifiedDice);
-    wasSet = true;
-    return wasSet;
-  }
+    private void initializeDoors() {
+        // Haunted House doors
+        Board.getSquare(6, 3).setBlocked(false);
+        Board.getSquare(5,6).setBlocked(false);
 
-  public void delete()
-  {
-    board.clear();
-    solution.clear();
-    players.clear();
-    dice.clear();
-  }
+        // Manic Manor doors
+        Board.getSquare(17,5).setBlocked(false);
+        Board.getSquare(20,6).setBlocked(false);
 
-  // line 17 "model.ump"
-  //setup the game, create the board, deal cards, etc.
-  public void setup(){
+        // Visitation Villa doors
+        Board.getSquare(12,10).setBlocked(false);
+        Board.getSquare(14,11).setBlocked(false);
+        Board.getSquare(11,13).setBlocked(false);
+        Board.getSquare(9,12).setBlocked(false);
 
-    createBoard();
-    initializePlayers();
-    state = GameState.ONGOING;
-  }
+        // Calamity Castle doors
+        Board.getSquare(3, 17).setBlocked(false);
+        Board.getSquare(6, 18).setBlocked(false);
 
-  public void initializePlayers() {
-    Player[] allPlayers = new Player[playerCount];
-
-    for (int i = 0; i < playerCount; i++) {
-      Player.PlayerName playerName = Player.PlayerName.values()[i];
-      allPlayers[i] = new Player(playerName, new Square(null));
-    }
-    setPlayers(allPlayers);
-    currentTurn = PlayerName.Lucilla;
-  }
-
-  private void dealCards() {
-    // Implement the logic to shuffle and deal the Cluedo cards to players
-    // For example:
-    List<Card> allCards = new ArrayList<>();
-    // Assuming you have a method to get all the cards for the Cluedo game
-    // allCards.addAll(getAllRoomCards());
-    // allCards.addAll(getAllWeaponCards());
-    // allCards.addAll(getAllCharacterCards());
-    Collections.shuffle(allCards);
-
-    int cardsPerPlayer = allCards.size() / playerCount;
-    for (int i = 0; i < playerCount; i++) {
-        int startIndex = i * cardsPerPlayer;
-        int endIndex = startIndex + cardsPerPlayer;
-        Card[] playerCards = allCards.subList(startIndex, endIndex).toArray(new Card[0]);
-        // getPlayer(i).setCards(playerCards);
+        // Peril Palace doors
+        Board.getSquare(18, 17).setBlocked(false);
+        Board.getSquare(17, 20).setBlocked(false);
     }
 
-    // The remaining cards (if any) can be shown as "solutions" in the game
-    Card[] solutionCards = allCards.subList(playerCount * cardsPerPlayer, allCards.size()).toArray(new Card[0]);
-    setSolution(solutionCards);
-}
+    /**
+     * Create each card
+     * Add cards to the solution
+     *
+     */
+     private void initializeCards() {
+         for (PlayerName p : PlayerName.values()) {
+             CharacterCard c = new CharacterCard(p.toString());
+             characterMap.put(p.toString(), c);
+             allCards.add(c);
+         }
 
-  // line 18 "model.ump"
-  public void createBoard(){
-    //implement logic to create the cluedo game board here
-    //create squares, rooms, and blocks
-    //setup their connections in initial state.
-  }
+         for (WeaponName w : WeaponName.values()) {
+             WeaponCard c = new WeaponCard(w.toString());
+             weaponMap.put(w.toString(), c);
+             allCards.add(c);
+         }
 
-  // line 19 "model.ump"
-  public void loop(){
-    
-  }
-
-  // line 20 "model.ump"
-  public void solveAttempt(){
-    
-  }
-
-  
-
-  // line 22 "model.ump"
-  public void playerTurn(){
-    int moves = 0;
-    for (Die d : dice) {
-      moves += d.roll();
+         for (EstateName e : EstateName.values()) {
+             EstateCard c = new EstateCard(e.toString());
+             estateMap.put(e.toString(), c);
+             allCards.add(c);
+         }
+     }
+    /**
+     * Create character and place them at starting positions
+     */
+    private void initializeCharacters(){
+        allCharacters.add(new Character(Board.getSquare(11, 1), PlayerName.Lucilla, RED_BOLD));
+        allCharacters.add(new Character(Board.getSquare(1, 9), PlayerName.Bert, BLUE_BOLD));
+        allCharacters.add(new Character(Board.getSquare(22, 14), PlayerName.Percy, PURPLE_BOLD));
+        allCharacters.add(new Character(Board.getSquare(9, 22), PlayerName.Malina, GREEN_BOLD));
     }
-    while (moves > 0) {
-      moves--;
+
+    /**
+     * Create players
+     */
+    private void initializePlayers(){
+//        Collections.shuffle(allCharacters);
+        for (int i = 0; i < playerCount; i++){
+            allPlayers.add(new Player(allCharacters.get(i), board));
+        }
     }
-  }
+
+    /**
+     * Distributes cards evenly between players
+     */
+    private void distributeCards(){
+        Collections.shuffle(allCards);
+        tempDeck = new ArrayList<>(allCards);
+        solution = generateSolution();
+        int playerIndex = 0;
+        while(!tempDeck.isEmpty()){
+            Player currentPlayer = allPlayers.get(playerIndex);
+            Card c = tempDeck.get((int) (Math.random()* tempDeck.size()));
+            currentPlayer.addCard(c);
+            tempDeck.remove(c);
+            playerIndex = (playerIndex + 1) % playerCount;
+        }
+        // for debugging
+        for (Player p : getPlayers()){
+            System.out.print(p.getName() + ": ");
+            System.out.println(p.getHand().size());
+            for (Card card : p.getHand()){
+                System.out.println(card.getCardName());
+            }
+        }
+    }
 
 
-  public String toString()
-  {
-    return super.toString() + "["+
-            "playerCount" + ":" + getPlayerCount()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "currentTurn" + "=" + (getCurrentTurn() != null ? !getCurrentTurn().equals(this)  ? getCurrentTurn().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "state" + "=" + (getState() != null ? !getState().equals(this)  ? getState().toString().replaceAll("  ","    ") : "this" : "null");
-  }
+    /**
+     * Create weapons and randomly add to estates
+     * @return
+     */
+    private void initializeWeapons(){
+        allWeapons.add(new Weapon("Broom"));
+        allWeapons.add(new Weapon("Scissors"));
+        allWeapons.add(new Weapon("Knife"));
+        allWeapons.add(new Weapon("Shovel"));
+        allWeapons.add(new Weapon("iPad"));
+
+        Collections.shuffle(allEstates);
+
+        for (int i = 0; i < allEstates.size(); i++){
+            allEstates.get(i).addWeapon(allWeapons.get(i));
+        }
+    }
+
+    /**
+     * Create a guess object that is the solution for the game
+     * @return
+     */
+    private Guess generateSolution(){
+         WeaponCard weapon;
+         EstateCard estate;
+         CharacterCard murderer;
+
+         int i = (int) (Math.random() * tempDeck.size());
+         while(!(tempDeck.get(i) instanceof WeaponCard)){
+             i = (int) (Math.random() * tempDeck.size());
+         }
+
+         weapon = (WeaponCard) tempDeck.get(i);
+         tempDeck.remove(weapon);
+
+         i = (int) (Math.random() * tempDeck.size());
+         while(!(tempDeck.get(i) instanceof EstateCard)){
+             i = (int) (Math.random() * tempDeck.size());
+
+         }
+
+         estate = (EstateCard) tempDeck.get(i);
+         tempDeck.remove(estate);
+
+        i = (int) (Math.random() * tempDeck.size());
+        while(!(tempDeck.get(i) instanceof CharacterCard)){
+            i = (int) (Math.random() * tempDeck.size());
+
+        }
+
+        murderer = (CharacterCard) tempDeck.get(i);
+        tempDeck.remove(murderer);
+
+        System.out.println("Solution: " + murderer.getCardName() + " with the " + weapon.getCardName() + " in " + estate.getCardName());
+
+        return new Guess(murderer, weapon, estate);
+
+    }
+
+    /**
+     * The game loop, runs the game logic,
+     * and allows each player to play during their turn
+     */
+    public void loop(){
+        int currentPlayerIndex = 0;
+        while(state == GameState.ONGOING){ // condition for game loop to run
+            Player currentPlayer = allPlayers.get(currentPlayerIndex);
+            currentTurn = currentPlayer.getName();
+            //Display the current game state
+            board.drawToScreen();
+
+            currentPlayer.doTurn();
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+        }
+    }
+
+    public static Guess getSolution(){
+        return solution;
+    }
+
+    public static List<Player> getPlayers(){
+        return allPlayers;
+    }
+
+    public static ArrayList<Card> getAllCards(){
+        return allCards;
+    }
+
 }
