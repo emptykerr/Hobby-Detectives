@@ -171,17 +171,31 @@ public class HobbyDetectives {
      * Create character and place them at starting positions
      */
     private void initializeCharacters(){
-        allCharacters.add(new Character(Board.getSquare(11, 1), PlayerName.Lucilla, RED_BOLD));
-        allCharacters.add(new Character(Board.getSquare(1, 9), PlayerName.Bert, BLUE_BOLD));
-        allCharacters.add(new Character(Board.getSquare(22, 14), PlayerName.Percy, PURPLE_BOLD));
-        allCharacters.add(new Character(Board.getSquare(9, 22), PlayerName.Malina, GREEN_BOLD));
+        allCharacters.add(new Character(Board.getSquare(11, 1), PlayerName.Lucilla, GREEN_BOLD));
+        allCharacters.add(new Character(Board.getSquare(1, 9), PlayerName.Bert, YELLOW_BOLD));
+        allCharacters.add(new Character(Board.getSquare(9, 22), PlayerName.Malina, BLUE_BOLD));
+        allCharacters.add(new Character(Board.getSquare(22, 14), PlayerName.Percy, RED_BOLD));
     }
 
     /**
-     * Create players
+     * Create players3
      */
     private void initializePlayers(){
-//        Collections.shuffle(allCharacters);
+       Collections.shuffle(allCharacters);
+       while (true) {
+        System.out.println("How many players are playing? (Enter 3 or 4):");
+        Scanner s = new Scanner(System.in);
+        int ans = s.nextInt();
+        if (ans == (3)) {
+           playerCount = 3;
+           break;
+        } else if (ans == 4) {
+            playerCount = 4;
+            break;
+        } else {
+            System.out.println("Please enter 3 or 4 players");
+        }
+        }
         for (int i = 0; i < playerCount; i++){
             allPlayers.add(new Player(allCharacters.get(i), board));
         }
