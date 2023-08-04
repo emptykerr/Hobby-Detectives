@@ -1,6 +1,7 @@
 public class Character {
     private HobbyDetectives.PlayerName name;
     private Square square;
+
     private String colour;
 
     public Character(Square square, HobbyDetectives.PlayerName name, String colour){
@@ -70,6 +71,10 @@ public class Character {
 
     public Square getSquare() {
         return square;
+    }
+
+    public void setSquare(Square square) {
+        this.square = square;
     }
 
     public String getColour() { return colour;}

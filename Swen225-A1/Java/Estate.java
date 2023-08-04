@@ -42,6 +42,8 @@ public class Estate {
         return null;
     }
 
+
+
     public int getX(){ return x; }
     public int getY(){ return y; }
 }
