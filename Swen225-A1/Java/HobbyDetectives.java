@@ -103,6 +103,10 @@ public class HobbyDetectives {
         allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
     }
 
+    private void intializeUnreachableSquares(){
+
+    }
+
     public void initializeBoard() {
         board = new Board();
         for (int x = 0; x < board.getLength(); x++) {
@@ -298,6 +302,7 @@ public class HobbyDetectives {
             //Display the current game state
             board.drawToScreen();
 
+            currentPlayer.getCharacter().startNewRound();
             currentPlayer.doTurn();
             currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }

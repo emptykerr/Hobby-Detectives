@@ -7,6 +7,8 @@ public class Player {
     private final List<Card> hand;
     private final Board board;
 
+    Player playerChosen = null;
+
     public Player(Character c, Board b) {
         character = c;
         board = b;
@@ -29,7 +31,7 @@ public class Player {
      */
     public Card reveal(Guess guess) {
         List<Card> guessOverlap = new ArrayList<>();
-        Player playerChosen = null;
+        playerChosen = null;
         int cardNum;
         // have to loop through all characters to find one that has at least one card that is in the guess
         for (Player p : HobbyDetectives.getPlayers()) {
@@ -137,10 +139,15 @@ public class Player {
     }
 
     private void doBoardMove() {
-        int moves = Die.roll() + Die.roll();
+        int die1 = Die.roll();
+        int die2 = Die.roll();
+        int moves = die1 + die2;
+        System.out.println(character.getName() + "'s turn:");
+        System.out.println("You rolled a " + die1 + " and " + die2 + " for a total of " + moves);
+        System.out.println("Moves left: " + moves);
         Set<Square> visited = new HashSet<>();
         while (moves > 0) {
-            String askPlayerDirection = character.getName() + " Where would you like to move to? (Enter U, R, D or L to move): ";
+            String askPlayerDirection = "Where would you like to move to? (Enter U, R, D or L to move): ";
             // Change what direction options are available depending on walls
 
             System.out.println(askPlayerDirection);
@@ -187,7 +194,7 @@ public class Player {
                 }
             }
 
-            System.out.println("The card shown to you by " + character.getName() + " is: " + card.getCardName());
+            System.out.println("The card shown to you by " + playerChosen.character.getName() + " is: " + card.getCardName());
         } else {
             System.out.println("No players could show you any cards");
         }
@@ -208,52 +215,121 @@ public class Player {
      *
      * @return Guess created, consisting of a Character, Weapon and Estate Card
      */
-    private Guess inputGuess(Estate estate) {
-        WeaponCard weaponCard;
-        CharacterCard characterCard;
-        EstateCard estateCard;  // estate the current character is in
-        if (estate != null){
-            estateCard = HobbyDetectives.estateMap.get(estate.getName());
-        } else {
-            HobbyDetectives.EstateName estateName;
-            boolean valid = false;
-            System.out.println("Please input the estate name that you want to interrogate out of: ");
-            Arrays.stream(HobbyDetectives.EstateName.values()).forEach(c -> System.out.println(c.toString()));
-            do {
-                Scanner s = new Scanner(System.in);
-                String input = s.nextLine();
-                estateName = HobbyDetectives.EstateName.estateNameMap.get(input.toLowerCase());
-                if (estateName != null) valid = true;
-            } while (!valid);
+//    private Guess inputGuess(Estate estate) {
+//        WeaponCard weaponCard;
+//        CharacterCard characterCard;
+//        EstateCard estateCard;  // estate the current character is in
+//        if (estate != null){
+//            estateCard = HobbyDetectives.estateMap.get(estate.getName());
+//        } else {
+//            HobbyDetectives.EstateName estateName;
+//            boolean valid = false;
+//            System.out.println("Please input the estate name that you want to interrogate out of: ");
+//            Arrays.stream(HobbyDetectives.EstateName.values()).forEach(c -> System.out.println(c.toString()));
+//            do {
+//                Scanner s = new Scanner(System.in);
+//                String input = s.nextLine();
+//                estateName = HobbyDetectives.EstateName.estateNameMap.get(input.toLowerCase());
+//                if (estateName != null) valid = true;
+//            } while (!valid);
+//
+//            estateCard = HobbyDetectives.estateMap.get(estateName.toString());
+//        }
+//
+//        HobbyDetectives.PlayerName characterName;
+//        HobbyDetectives.WeaponName weaponName;
+//        boolean valid = false;
+//        System.out.println("Please input the character name that you want to interrogate out of: ");
+//        Arrays.stream(HobbyDetectives.PlayerName.values()).forEach(c -> System.out.println(c.toString()));
+//        do {
+//            Scanner s = new Scanner(System.in);
+//            String input = s.nextLine();
+//            characterName = HobbyDetectives.PlayerName.playerNameMap.get(input.toLowerCase());
+//            if (characterName != null) valid = true;
+//        } while (!valid);
+//        valid = false;
+//        System.out.println("Please input the weapon name that you want to interrogate out of: ");
+//        Arrays.stream(HobbyDetectives.WeaponName.values()).forEach(c -> System.out.println(c.toString()));
+//        do {
+//            Scanner s = new Scanner(System.in);
+//            String input = s.nextLine();
+//            weaponName = HobbyDetectives.WeaponName.weaponNameMap.get(input.toLowerCase());
+//            if (weaponName != null) valid = true;
+//        } while (!valid);
+//        characterCard = HobbyDetectives.characterMap.get(characterName.toString());
+//        weaponCard = HobbyDetectives.weaponMap.get(weaponName.toString());
+//
+//        return new Guess(characterCard, weaponCard, estateCard);
+//    }
 
-            estateCard = HobbyDetectives.estateMap.get(estateName.toString());
+    /**
+     * Prompt the user to choose an estate card for interrogation.
+     *
+     * @return The selected estate card.
+     */
+    private EstateCard chooseEstateCard() {
+        System.out.println("Please input the estate name that you want to interrogate out of:");
+        return HobbyDetectives.estateMap.get(getValidEnumInput(HobbyDetectives.EstateName.class));
+    }
+
+    /**
+     * Prompt the user to choose a character card for interrogation.
+     *
+     * @return The selected character card.
+     */
+    private CharacterCard chooseCharacterCard() {
+        System.out.println("Please input the character name that you want to interrogate out of:");
+        return HobbyDetectives.characterMap.get(getValidEnumInput(HobbyDetectives.PlayerName.class));
+    }
+
+    /**
+     * Prompt the user to choose a weapon card for interrogation.
+     *
+     * @return The selected weapon card.
+     */
+    private WeaponCard chooseWeaponCard() {
+        System.out.println("Please input the weapon name that you want to interrogate out of:");
+        return HobbyDetectives.weaponMap.get(getValidEnumInput(HobbyDetectives.WeaponName.class));
+    }
+
+    /**
+     * Prompt the user to input a valid enum value.
+     *
+     * @param enumType The enum class.
+     * @param <T>      The enum type.
+     * @return The selected enum value.
+     */
+    private <T extends Enum<T>> T getValidEnumInput(Class<T> enumType) {
+        while (true) {
+            Arrays.stream(enumType.getEnumConstants())
+                    .forEach(e -> System.out.println(e.toString()));
+
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine().toUpperCase();
+
+            for (T enumValue : enumType.getEnumConstants()) {
+                if (enumValue.toString().equalsIgnoreCase(input)) {
+                    return enumValue;
+                }
+            }
+
+            System.out.println("Invalid input. Please try again.");
         }
+    }
 
-        HobbyDetectives.PlayerName characterName;
-        HobbyDetectives.WeaponName weaponName;
-        boolean valid = false;
-        System.out.println("Please input the character name that you want to interrogate out of: ");
-        Arrays.stream(HobbyDetectives.PlayerName.values()).forEach(c -> System.out.println(c.toString()));
-        do {
-            Scanner s = new Scanner(System.in);
-            String input = s.nextLine();
-            characterName = HobbyDetectives.PlayerName.playerNameMap.get(input.toLowerCase());
-            if (characterName != null) valid = true;
-        } while (!valid);
-        valid = false;
-        System.out.println("Please input the weapon name that you want to interrogate out of: ");
-        Arrays.stream(HobbyDetectives.WeaponName.values()).forEach(c -> System.out.println(c.toString()));
-        do {
-            Scanner s = new Scanner(System.in);
-            String input = s.nextLine();
-            weaponName = HobbyDetectives.WeaponName.weaponNameMap.get(input.toLowerCase());
-            if (weaponName != null) valid = true;
-        } while (!valid);
-        characterCard = HobbyDetectives.characterMap.get(characterName.toString());
-        weaponCard = HobbyDetectives.weaponMap.get(weaponName.toString());
+    /**
+     * Asks the player to choose one of each card for a guess
+     * @param estate
+     * @return
+     */
+    private Guess inputGuess(Estate estate) {
+        EstateCard estateCard = (estate != null) ? HobbyDetectives.estateMap.get(estate.getName()) : chooseEstateCard();
+        CharacterCard characterCard = chooseCharacterCard();
+        WeaponCard weaponCard = chooseWeaponCard();
 
         return new Guess(characterCard, weaponCard, estateCard);
     }
+
 
     /**
      * Adds card to players hand
@@ -265,5 +341,9 @@ public class Player {
 
     public List<Card> getHand(){
         return hand;
+    }
+
+    public Character getCharacter(){
+        return character;
     }
 }

@@ -1,13 +1,19 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class Character {
     private HobbyDetectives.PlayerName name;
     private Square square;
 
     private String colour;
+    private Set<Square> visitedSquares = new HashSet<>();
+
 
     public Character(Square square, HobbyDetectives.PlayerName name, String colour){
         this.name = name;
         this.square = square;
         this.colour = colour;
+
         square.addCharacter(this);
     }
 
@@ -15,16 +21,21 @@ public class Character {
      * Move character to suggested square
      * - Alex
      */
-    public boolean move(Square squareToMove){
-        if (squareToMove.getCharacter() != null || squareToMove.isBlocked()){
+    public boolean move(Square squareToMove) {
+        if (squareToMove.getCharacter() != null || squareToMove.isBlocked() || visitedSquares.contains(squareToMove)) {
+            if(visitedSquares.contains(squareToMove)){
+                System.out.println("You have already visited this square");
+            }
             return false;
         }
 
+        visitedSquares.add(squareToMove); // Mark the square as visited
         squareToMove.addCharacter(this);
         square.removeCharacter();
         square = squareToMove;
         return true;
     }
+
 
     /**
      * Steps the character (up, down, left or right) depending on string parameter.
@@ -69,9 +80,16 @@ public class Character {
         return newSquare;
     }
 
+    public void startNewRound() {
+        visitedSquares.clear();
+    }
+
+
     public Square getSquare() {
         return square;
     }
+
+
 
     public void setSquare(Square square) {
         this.square = square;
