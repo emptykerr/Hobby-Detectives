@@ -137,6 +137,13 @@ public class HobbyDetectives {
     }
 
 
+    /**
+     * Creates the unreachable squares on the map
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
     private void createUnreachableSquares(int x, int y, int width, int height){
         x = x-1;
         y = y-1;
@@ -149,6 +156,10 @@ public class HobbyDetectives {
             }
         }
     }
+
+    /**
+     * The ranges the unreachable squares start and end between
+     */
     private void initializeUnreachableSquares(){
         createUnreachableSquares(12,6,2,2);
         createUnreachableSquares(6,12,2,2);
@@ -158,6 +169,9 @@ public class HobbyDetectives {
 
     }
 
+    /**
+     * creates the squares and estates on the board
+     */
     public void initializeBoard() {
         board = new Board();
         for (int x = 0; x < board.getLength(); x++) {
@@ -233,7 +247,8 @@ public class HobbyDetectives {
     }
 
     /**
-     * Create players3
+     * Create players
+     * Asks the user how many players to play.
      */
     private void initializePlayers(){
        Collections.shuffle(allCharacters);
@@ -353,6 +368,8 @@ public class HobbyDetectives {
     /**
      * The game loop, runs the game logic,
      * and allows each player to play during their turn
+     *
+     * if state is won, print out the solution, and who it was solved by
      */
     public void loop(){
         int currentPlayerIndex = 0;

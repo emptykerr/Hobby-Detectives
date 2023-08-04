@@ -86,6 +86,10 @@ public class Player {
         }
     }
 
+    /**
+     * returns the current state of the game for the main class
+     * @return
+     */
     public boolean checkGamestate(){
         return won;
     }
@@ -249,6 +253,10 @@ public class Player {
         return new Guess(characterCard, weaponCard, estateCard);
     }
 
+    /**
+     * helper method for selecting the estate for guessing
+     * @return the card selected
+     */
     private EstateCard selectEstate() {
         System.out.println("Please input the estate name that you want to interrogate out of: ");
         printEnumValues(HobbyDetectives.EstateName.values());
@@ -268,6 +276,10 @@ public class Player {
         return estateCard;
     }
 
+    /**
+     * helper method for selecting the character guessing
+     * @return the card selected
+     */
     private CharacterCard selectCharacter() {
         System.out.println("Please input the character name that you want to interrogate out of: ");
         printEnumValues(HobbyDetectives.PlayerName.values());
@@ -286,7 +298,10 @@ public class Player {
 
         return characterCard;
     }
-
+    /**
+     * helper method for selecting the weapon for guessing
+     * @return the card selected
+     */
     private WeaponCard selectWeapon() {
         System.out.println("Please input the weapon name that you want to interrogate out of: ");
         printEnumValues(HobbyDetectives.WeaponName.values());
@@ -306,10 +321,17 @@ public class Player {
         return weaponCard;
     }
 
+    /**
+     * Helper method to print the cards to choose from, from the enum values.
+     */
     private void printEnumValues(Enum[] values) {
         Arrays.stream(values).forEach(c -> System.out.println(c.toString()));
     }
 
+    /**
+     * Creates a scanner to be used in the guessing methods
+     * @return the inputted value from the player
+     */
     private String getUserInput() {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
