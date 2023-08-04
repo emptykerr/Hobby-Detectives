@@ -143,7 +143,11 @@ public class Player {
         int die2 = Die.roll();
         int moves = die1 + die2;
         System.out.println(character.getName() + "'s turn:");
-        System.out.println("You rolled a " + die1 + " and " + die2 + " for a total of " + moves);
+        System.out.println("You have " + this.getHand().size() + " cards");
+        for (Card card : this.getHand()){
+            System.out.println(card.getClass().toString().substring(card.getClass().toString().lastIndexOf(" ") + 1) + ": " + card.getCardName());
+        }
+        System.out.println("\nYou rolled a " + die1 + " and " + die2 + " for a total of " + moves);
         System.out.println("Moves left: " + moves);
         Set<Square> visited = new HashSet<>();
         while (moves > 0) {

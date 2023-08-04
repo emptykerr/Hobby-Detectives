@@ -84,6 +84,7 @@ public class HobbyDetectives {
         initializeEstates();
         initializeBoard();
         initializeDoors();
+        initializeUnreachableSquares();
         initializeCards();
         initializeCharacters();
         initializePlayers();
@@ -103,7 +104,25 @@ public class HobbyDetectives {
         allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
     }
 
-    private void intializeUnreachableSquares(){
+
+    private void createUnreachableSquares(int x, int y, int width, int height){
+        x = x-1;
+        y = y-1;
+        for (int row = x; row < x + width; row++) {
+            for (int col = y; col < y + height; col++) {
+                Square square = new Square(row, col);
+                board.addSquare(square, row, col);
+
+                square.setBlocked(true);
+            }
+        }
+    }
+    private void initializeUnreachableSquares(){
+        createUnreachableSquares(12,6,2,2);
+        createUnreachableSquares(6,12,2,2);
+        createUnreachableSquares(18,12,2,2);
+        createUnreachableSquares(12,18,2,2);
+
 
     }
 

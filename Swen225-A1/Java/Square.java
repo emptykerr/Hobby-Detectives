@@ -46,7 +46,10 @@ public class Square{
         } else {
             if (blocked && isEstateBorder()){
                 System.out.print("X");
-            } else if(isEstateBorder() && estate !=null) {
+            } else if (blocked && estate == null){
+                System.out.print("X");
+
+            }else if(isEstateBorder() && estate !=null) {
                 System.out.print(HobbyDetectives.GREEN_BOLD + "/");
             } else {
                 if (estate != null) {
@@ -54,7 +57,6 @@ public class Square{
                         System.out.print(HobbyDetectives.CYAN_BOLD + estate.getName().charAt(0));
                     } else {
                             System.out.print(" ");
-
                     }
                 } else {
                     System.out.print("_");
