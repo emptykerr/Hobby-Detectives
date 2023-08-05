@@ -131,9 +131,9 @@ public class HobbyDetectives {
     private void initializeEstates(){
         allEstates.add(new Estate("Haunted House", 2, 2, 5, 5));
         allEstates.add(new Estate("Manic Manor", 17, 2, 5, 5));
+        allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
         allEstates.add(new Estate("Calamity Castle", 2, 17, 5, 5));
         allEstates.add(new Estate("Peril Palace", 17, 17, 5, 5));
-        allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
     }
 
 
@@ -190,26 +190,40 @@ public class HobbyDetectives {
 
     private void initializeDoors() {
         // Haunted House doors
-        Board.getSquare(6, 3).setBlocked(false);
-        Board.getSquare(5,6).setBlocked(false);
+        allEstates.get(0).addDoor(6, 3, "Right");
+        allEstates.get(0).addDoor(5, 6, "Bottom");
+
+//        Board.getSquare(6, 3).setBlocked(false);
+//        Board.getSquare(5,6).setBlocked(false);
 
         // Manic Manor doors
-        Board.getSquare(17,5).setBlocked(false);
-        Board.getSquare(20,6).setBlocked(false);
+//        Board.getSquare(17,5).setBlocked(false);
+//        Board.getSquare(20,6).setBlocked(false);
+        allEstates.get(1).addDoor(17,5, "Left");
+        allEstates.get(1).addDoor(20,6, "Bottom");
 
         // Visitation Villa doors
-        Board.getSquare(12,10).setBlocked(false);
-        Board.getSquare(14,11).setBlocked(false);
-        Board.getSquare(11,13).setBlocked(false);
-        Board.getSquare(9,12).setBlocked(false);
+        allEstates.get(2).addDoor(12,10, "Top");
+        allEstates.get(2).addDoor(14,11, "Right");
+        allEstates.get(2).addDoor(11,13, "Left");
+        allEstates.get(2).addDoor(9,12, "Bottom");
+
+//        Board.getSquare(12,10).setBlocked(false);
+//        Board.getSquare(14,11).setBlocked(false);
+//        Board.getSquare(11,13).setBlocked(false);
+//        Board.getSquare(9,12).setBlocked(false);
 
         // Calamity Castle doors
-        Board.getSquare(3, 17).setBlocked(false);
-        Board.getSquare(6, 18).setBlocked(false);
+        allEstates.get(3).addDoor(3,17, "Top");
+        allEstates.get(3).addDoor(6,18, "Right");
+//        Board.getSquare(3, 17).setBlocked(false);
+//        Board.getSquare(6, 18).setBlocked(false);
 
         // Peril Palace doors
-        Board.getSquare(18, 17).setBlocked(false);
-        Board.getSquare(17, 20).setBlocked(false);
+        allEstates.get(4).addDoor(18,17, "Top");
+        allEstates.get(4).addDoor(17,20, "Left");
+//        Board.getSquare(18, 17).setBlocked(false);
+//        Board.getSquare(17, 20).setBlocked(false);
     }
 
     /**

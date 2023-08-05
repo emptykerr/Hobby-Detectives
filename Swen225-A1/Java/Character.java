@@ -22,10 +22,20 @@ public class Character {
      * - Alex
      */
     public boolean move(Square squareToMove) {
-        if (squareToMove.getCharacter() != null || squareToMove.isBlocked() || visitedSquares.contains(squareToMove)) {
+        if(squareToMove.getEstate() != null && !squareToMove.isBlocked()){
+            this.square.removeCharacter();
+            setSquare(Board.getSquare(squareToMove.getEstate().getX() + 1, squareToMove.getEstate().getY() + 1));
+            this.square.addCharacter(this);
+            return true;
+        }
+        // instead of setting it to x+1 y+1 check if a character is there, then add x+2/y+2 in a 2x2 square
+        //until there is room.
+
+            if (squareToMove.getCharacter() != null || squareToMove.isBlocked() || visitedSquares.contains(squareToMove)) {
             if(visitedSquares.contains(squareToMove)){
                 System.out.println("You have already visited this square");
             }
+
             return false;
         }
 

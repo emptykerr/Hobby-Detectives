@@ -137,7 +137,9 @@ public class Player {
                 Scanner s = new Scanner(System.in);
                 String ans = s.nextLine().toUpperCase();
                 if (ans.equals("Y")) {
-                    doBoardMove();
+                    character.getSquare().removeCharacter();
+                    moveOutOfEstate();
+//                    doBoardMove();
                     return;
                 } else if (ans.equals("N")) {
                     doGuess();
@@ -148,6 +150,44 @@ public class Player {
             }
         } else {
             doBoardMove();
+        }
+    }
+
+    private void moveOutOfEstate(){
+        Estate currentEstate = character.getSquare().getEstate();
+        System.out.println("Which door would you like to leave through?");
+        System.out.println("There are " + currentEstate.doors.size() + " doors:");
+
+        for(Map.Entry door : currentEstate.doors.entrySet()){
+            System.out.println(door.getValue() + " door");
+        }
+
+        while(character.getSquare().getEstate() !=null) {
+            System.out.println("Enter 'U', 'D', 'L', or 'R' to move");
+            Scanner in = new Scanner(System.in);
+            String direction = in.nextLine().toUpperCase();
+
+            String moveDirection = switch (direction) {
+                case "U" -> "Top";
+                case "R" -> "Right";
+                case "D" -> "Bottom";
+                case "L" -> "Left";
+                default -> "";
+            };
+
+            for (Map.Entry door : currentEstate.doors.entrySet()) {
+                if (door.getValue().equals(moveDirection)) {
+                    character.setSquare((Square) door.getKey());
+                }
+            }
+
+            if (character.step(direction) != null) {
+                board.drawToScreen();
+                System.out.println("You exited through the " + moveDirection + " door");
+                doBoardMove();
+            } else {
+                System.out.println("There is no door there. Try again");
+            }
         }
     }
 
@@ -206,7 +246,7 @@ public class Player {
         Card card = reveal(inputGuess(character.getSquare().getEstate()));
 
         if (card != null) {
-            System.out.println("Pass the iPad back to " + character.getName() + ". You'll have 10 seconds");
+            System.out.println("Pass the tablet back to " + character.getName() + ". You'll have 10 seconds");
             for (int i = 10; i >= 0; i--){
                 try {
                     Thread.sleep(1000);
