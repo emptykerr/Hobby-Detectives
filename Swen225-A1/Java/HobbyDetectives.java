@@ -403,6 +403,9 @@ public class HobbyDetectives {
             if(currentPlayer.checkGamestate()){
                 state = GameState.WON;
             }
+            if(allPlayers.stream().allMatch(Player::checkEliminated)){
+                state = GameState.LOST;
+            }
             currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
 
@@ -413,7 +416,15 @@ public class HobbyDetectives {
             System.out.println("Solution: " + solution.getCharacter().getCardName() + " with the " + solution.getWeapon().getCardName() + " in " + solution.getEstate().getCardName());
             System.out.println("It was solved by: " + currentTurn);
             System.out.println("\n------------------------------------------------");
+        }
 
+        if(state == GameState.LOST){
+            System.out.println("\n------------------------------------------------");
+            System.out.println("\nThe murder mystery has failed.");
+            Guess solution = getSolution();
+            System.out.println("Solution: " + solution.getCharacter().getCardName() + " with the " + solution.getWeapon().getCardName() + " in " + solution.getEstate().getCardName());
+            System.out.println("No player correctly solved the murder");
+            System.out.println("\n------------------------------------------------");
         }
     }
 
