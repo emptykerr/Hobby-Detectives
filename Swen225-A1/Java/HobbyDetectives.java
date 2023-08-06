@@ -32,12 +32,11 @@ public class HobbyDetectives {
     public HobbyDetectives(){
        //initialize fields and perform necessary setup
         playerCount = 4;
-        //players = new Player[]{PlayerName.Lucilla, PlayerName.Bert, PlayerName.Percy, PlayerName.Malina};
     }
 
     public enum PlayerName{
-        Lucilla, Bert, Percy, Malina;
-        public static Map<String, PlayerName> playerNameMap = Map.of("lucilla", Lucilla, "bert", Bert, "percy", Percy, "malina", Malina);
+        Lucilla, Bert, Malina, Percy;
+        public static Map<String, PlayerName> playerNameMap = Map.of("lucilla", Lucilla, "bert", Bert, "malina", Malina, "percy", Percy);
     }
     public enum WeaponName {
         Broom, Scissors, Knife, Shovel, iPad;
@@ -58,7 +57,7 @@ public class HobbyDetectives {
         }
     }
 
-    enum GameState{START, ONGOING, GUESS, WON, LOST}
+    enum GameState{ ONGOING, WON, LOST }
     /**
      * Main method
      * initializes the game object
@@ -165,8 +164,6 @@ public class HobbyDetectives {
         createUnreachableSquares(6,12,2,2);
         createUnreachableSquares(18,12,2,2);
         createUnreachableSquares(12,18,2,2);
-
-
     }
 
     /**
@@ -250,6 +247,7 @@ public class HobbyDetectives {
              allCards.add(c);
          }
      }
+
     /**
      * Create character and place them at starting positions
      */
@@ -265,7 +263,6 @@ public class HobbyDetectives {
      * Asks the user how many players to play.
      */
     private void initializePlayers(){
-       Collections.shuffle(allCharacters);
        while (true) {
         System.out.println("How many players are playing? (Enter 3 or 4):");
         Scanner s = new Scanner(System.in);
@@ -281,16 +278,18 @@ public class HobbyDetectives {
         } else {
             System.out.println("Please enter 3 or 4 players");
         }
-        }
+       }
+
         for (int i = 0; i < playerCount; i++){
             allPlayers.add(new Player(allCharacters.get(i), board));
         }
+
     }
 
     /**
      * Distributes cards evenly between players
      */
-    private void distributeCards(){
+    private void distributeCards() {
         Collections.shuffle(allCards);
         tempDeck = new ArrayList<>(allCards);
         solution = generateSolution();
@@ -388,11 +387,10 @@ public class HobbyDetectives {
      * if state is won, print out the solution, and who it was solved by
      */
     public void loop(){
-        int currentPlayerIndex = 0;
+        int currentPlayerIndex = (int) (Math.random() * 4 + 1);
 
         //for debugging
         printCheatAnswers();
-
 
         while(state == GameState.ONGOING){ // condition for game loop to run
             Player currentPlayer = allPlayers.get(currentPlayerIndex);

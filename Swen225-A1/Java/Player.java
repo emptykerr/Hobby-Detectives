@@ -112,7 +112,13 @@ public class Player {
      * - Matt
      */
     public void doTurn() {
+        if(eliminated){
+            System.out.println(character.getName() + " is eliminated");
+            System.out.println("Skipping turn...");
+            return;
+        }
 
+        System.out.println("It is " + getName() + "'s turn");
         doMove();
 
         while (true) {
@@ -136,6 +142,7 @@ public class Player {
                     s.nextLine();
 
                 }
+                break;
             } else if (ans.equals("N")) {
                 break;
             } else {
@@ -211,7 +218,6 @@ public class Player {
         int die1 = Die.roll();
         int die2 = Die.roll();
         int moves = die1 + die2;
-        System.out.println(character.getName() + "'s turn:");
         System.out.println("You have " + this.getHand().size() + " cards");
         for (Card card : this.getHand()){
             System.out.println(card.getClass().toString().substring(card.getClass().toString().lastIndexOf(" ") + 1) + ": " + card.getCardName());
@@ -270,7 +276,7 @@ public class Player {
                 } catch (InterruptedException ie){
                     System.out.println("Error: " + ie);
                 }
-            }
+            }*/
 
             System.out.println("The card shown to you by " + playerChosen.character.getName() + " is: " + card.getCardName());
         } else {
@@ -318,7 +324,7 @@ public class Player {
         printEnumValues(HobbyDetectives.EstateName.values());
 
         EstateCard estateCard;
-        do {
+        while (true) {
             String input = getUserInput();
             HobbyDetectives.EstateName estateName = HobbyDetectives.EstateName.estateNameMap.get(input.toLowerCase());
             if (estateName != null) {
@@ -327,7 +333,7 @@ public class Player {
             } else {
                 System.out.println("That estate does not exist. Please try again");
             }
-        } while (true);
+        }
 
         return estateCard;
     }
@@ -341,9 +347,10 @@ public class Player {
         printEnumValues(HobbyDetectives.PlayerName.values());
 
         CharacterCard characterCard;
-        do {
+        while (true) {
             String input = getUserInput();
             HobbyDetectives.PlayerName characterName = HobbyDetectives.PlayerName.playerNameMap.get(input.toLowerCase());
+
             if (characterName != null) {
                 characterCard = HobbyDetectives.characterMap.get(characterName.toString());
                 if (character.getSquare().getEstate() == null) break;
@@ -361,7 +368,7 @@ public class Player {
             } else {
                 System.out.println("That character does not exist. Please try again");
             }
-        } while (true);
+        }
 
         return characterCard;
     }
@@ -374,7 +381,7 @@ public class Player {
         printEnumValues(HobbyDetectives.WeaponName.values());
 
         WeaponCard weaponCard;
-        do {
+        while (true) {
             String input = getUserInput();
             HobbyDetectives.WeaponName weaponName = HobbyDetectives.WeaponName.weaponNameMap.get(input.toLowerCase());
             if (weaponName != null) {
@@ -383,7 +390,7 @@ public class Player {
             } else {
                 System.out.println("That weapon does not exist. Please try again");
             }
-        } while (true);
+        }
 
         return weaponCard;
     }
@@ -403,8 +410,6 @@ public class Player {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
-
-
 
     /**
      * Adds card to players hand
