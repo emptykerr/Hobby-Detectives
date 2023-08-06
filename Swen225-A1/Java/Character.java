@@ -22,10 +22,20 @@ public class Character {
      * - Alex
      */
     public boolean move(Square squareToMove) {
-        if (squareToMove.getCharacter() != null || squareToMove.isBlocked() || visitedSquares.contains(squareToMove)) {
+        if(squareToMove.getEstate() != null && !squareToMove.isBlocked()){
+            this.square.removeCharacter();
+            setSquare(findEmptySquarePlayer(squareToMove));
+            this.square.addCharacter(this);
+            return true;
+        }
+        // instead of setting it to x+1 y+1 check if a character is there, then add x+2/y+2 in a 2x2 square
+        //until there is room.
+
+            if (squareToMove.getCharacter() != null || squareToMove.isBlocked() || visitedSquares.contains(squareToMove)) {
             if(visitedSquares.contains(squareToMove)){
                 System.out.println("You have already visited this square");
             }
+
             return false;
         }
 
@@ -34,6 +44,26 @@ public class Character {
         square.removeCharacter();
         square = squareToMove;
         return true;
+    }
+
+    public void moveCharacterIntoEstate(Estate e){
+        //find the first door in the estate - this returns a valid square in the estate
+        Square doorSquare = e.doors.entrySet().iterator().next().getKey();
+        //use this square to find an empty square in the estate
+        move(doorSquare);
+    }
+
+    public Square findEmptySquarePlayer(Square square){
+        int x = square.getEstate().getX() + 1; //plus one to avoid the border 'X's
+        int y = square.getEstate().getY() + 1; //plus one to avoid the border 'X's
+        for(int row = x; row < x+2; row++){
+            for(int col = y; col < y+2; col++){
+                if(Board.getSquare(row, col).getCharacter() == null){
+                    return Board.getSquare(row,col);
+                }
+            }
+        }
+        return null;
     }
 
 

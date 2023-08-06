@@ -7,7 +7,9 @@ public class Player {
     private final List<Card> hand;
     private final Board board;
 
-    boolean won = false;
+    private boolean eliminated = false;
+
+    private boolean won = false;
 
     Player playerChosen = null;
 
@@ -36,7 +38,8 @@ public class Player {
         playerChosen = null;
         int cardNum;
         // have to loop through all characters to find one that has at least one card that is in the guess
-        for (Player p : HobbyDetectives.getPlayers()) {
+
+        for (Player p : HobbyDetectives.getOrderedPlayers(HobbyDetectives.getPlayers(), this)) {
             if (!p.character.getName().equals(this.character.getName())) {
                 for (Card card : p.hand) {
                     // Check if player card is part of the guess
@@ -94,6 +97,7 @@ public class Player {
         return won;
     }
 
+    public boolean checkEliminated(){ return eliminated;}
 
 
     /**
@@ -112,6 +116,9 @@ public class Player {
         doMove();
 
         while (true) {
+            if (eliminated){
+                break;
+            }
             System.out.println("Would you like to make a solve attempt? (Y/N)");
             Scanner s = new Scanner(System.in);
             String ans = s.nextLine().toUpperCase();
@@ -119,7 +126,15 @@ public class Player {
                 if (doSolveAttempt()){
                     System.out.println("You solved correctly!");
                     won = true;
-                    break;
+                } else {
+                    System.out.println("\n----------------------------------------");
+                    System.out.println("You solved incorrectly");
+                    System.out.println("You can no longer guess or solve the murder, but you can still refute guesses.");
+                    System.out.println("----------------------------------------\n");
+                    eliminated = true;
+                    System.out.println("Press enter to continue");
+                    s.nextLine();
+
                 }
             } else if (ans.equals("N")) {
                 break;
@@ -133,11 +148,13 @@ public class Player {
     public void doMove() {
         if (character.getSquare().getEstate() != null) {
             while (true) {
-                System.out.println("Would you like to move? (Y/N)");
+                System.out.println("Would you like to leave the estate? (Y/N)");
                 Scanner s = new Scanner(System.in);
                 String ans = s.nextLine().toUpperCase();
                 if (ans.equals("Y")) {
-                    doBoardMove();
+                    character.getSquare().removeCharacter();
+                    moveOutOfEstate();
+//                    doBoardMove();
                     return;
                 } else if (ans.equals("N")) {
                     doGuess();
@@ -148,6 +165,45 @@ public class Player {
             }
         } else {
             doBoardMove();
+        }
+    }
+
+    private void moveOutOfEstate(){
+        Estate currentEstate = character.getSquare().getEstate();
+        System.out.println("Which door would you like to leave through?");
+        System.out.println("There are " + currentEstate.doors.size() + " doors:");
+
+        for(Map.Entry door : currentEstate.doors.entrySet()){
+            System.out.println(door.getValue() + " door");
+        }
+
+        while(character.getSquare().getEstate() != null) {
+            System.out.println("Enter 'U', 'D', 'L', or 'R' to move");
+            Scanner in = new Scanner(System.in);
+            String direction = in.nextLine().toUpperCase();
+
+            String moveDirection = switch (direction) {
+                case "U" -> "Top";
+                case "R" -> "Right";
+                case "D" -> "Bottom";
+                case "L" -> "Left";
+                default -> "";
+            };
+
+            for (Map.Entry door : currentEstate.doors.entrySet()) {
+                if (door.getValue().equals(moveDirection)) {
+                    character.setSquare((Square) door.getKey());
+                }
+            }
+
+            if (character.step(direction) != null) {
+                board.drawToScreen();
+                System.out.println("You exited through the " + moveDirection + " door");
+                doBoardMove();
+                break;
+            } else {
+                System.out.println("There is no door there or the door is blocked. Try again");
+            }
         }
     }
 
@@ -206,8 +262,8 @@ public class Player {
         Card card = reveal(inputGuess(character.getSquare().getEstate()));
 
         if (card != null) {
-            System.out.println("Pass the iPad back to " + character.getName() + ". You'll have 10 seconds");
-            for (int i = 10; i >= 0; i--){
+            System.out.println("Pass the tablet back to " + character.getName() + ". You'll have 10 seconds");
+            /**for (int i = 10; i >= 0; i--){
                 try {
                     Thread.sleep(1000);
                     System.out.println(i);
@@ -290,6 +346,17 @@ public class Player {
             HobbyDetectives.PlayerName characterName = HobbyDetectives.PlayerName.playerNameMap.get(input.toLowerCase());
             if (characterName != null) {
                 characterCard = HobbyDetectives.characterMap.get(characterName.toString());
+                if (character.getSquare().getEstate() == null) break;
+                System.out.println("\n---------------------------------------------------");
+                System.out.println("Bringing " + characterName + " to the estate for interrogating");
+                System.out.println("---------------------------------------------------\n");
+
+                //for each player, find the character that matches the guessed character, and move them into the current estate
+                for(Player p : HobbyDetectives.getPlayers()){
+                    if(characterCard.getCardName().equals(p.getCharacter().getName().name()) && p.getCharacter().getSquare().getEstate() != character.getSquare().getEstate()){
+                        p.getCharacter().moveCharacterIntoEstate(character.getSquare().getEstate());
+                    }
+                }
                 break;
             } else {
                 System.out.println("That character does not exist. Please try again");

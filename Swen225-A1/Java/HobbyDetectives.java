@@ -131,9 +131,9 @@ public class HobbyDetectives {
     private void initializeEstates(){
         allEstates.add(new Estate("Haunted House", 2, 2, 5, 5));
         allEstates.add(new Estate("Manic Manor", 17, 2, 5, 5));
+        allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
         allEstates.add(new Estate("Calamity Castle", 2, 17, 5, 5));
         allEstates.add(new Estate("Peril Palace", 17, 17, 5, 5));
-        allEstates.add(new Estate("Visitation Villa", 9, 10, 6, 4));
     }
 
 
@@ -190,26 +190,40 @@ public class HobbyDetectives {
 
     private void initializeDoors() {
         // Haunted House doors
-        Board.getSquare(6, 3).setBlocked(false);
-        Board.getSquare(5,6).setBlocked(false);
+        allEstates.get(0).addDoor(6, 3, "Right");
+        allEstates.get(0).addDoor(5, 6, "Bottom");
+
+//        Board.getSquare(6, 3).setBlocked(false);
+//        Board.getSquare(5,6).setBlocked(false);
 
         // Manic Manor doors
-        Board.getSquare(17,5).setBlocked(false);
-        Board.getSquare(20,6).setBlocked(false);
+//        Board.getSquare(17,5).setBlocked(false);
+//        Board.getSquare(20,6).setBlocked(false);
+        allEstates.get(1).addDoor(17,5, "Left");
+        allEstates.get(1).addDoor(20,6, "Bottom");
 
         // Visitation Villa doors
-        Board.getSquare(12,10).setBlocked(false);
-        Board.getSquare(14,11).setBlocked(false);
-        Board.getSquare(11,13).setBlocked(false);
-        Board.getSquare(9,12).setBlocked(false);
+        allEstates.get(2).addDoor(12,10, "Top");
+        allEstates.get(2).addDoor(14,11, "Right");
+        allEstates.get(2).addDoor(11,13, "Left");
+        allEstates.get(2).addDoor(9,12, "Bottom");
+
+//        Board.getSquare(12,10).setBlocked(false);
+//        Board.getSquare(14,11).setBlocked(false);
+//        Board.getSquare(11,13).setBlocked(false);
+//        Board.getSquare(9,12).setBlocked(false);
 
         // Calamity Castle doors
-        Board.getSquare(3, 17).setBlocked(false);
-        Board.getSquare(6, 18).setBlocked(false);
+        allEstates.get(3).addDoor(3,17, "Top");
+        allEstates.get(3).addDoor(6,18, "Right");
+//        Board.getSquare(3, 17).setBlocked(false);
+//        Board.getSquare(6, 18).setBlocked(false);
 
         // Peril Palace doors
-        Board.getSquare(18, 17).setBlocked(false);
-        Board.getSquare(17, 20).setBlocked(false);
+        allEstates.get(4).addDoor(18,17, "Top");
+        allEstates.get(4).addDoor(17,20, "Left");
+//        Board.getSquare(18, 17).setBlocked(false);
+//        Board.getSquare(17, 20).setBlocked(false);
     }
 
     /**
@@ -255,13 +269,15 @@ public class HobbyDetectives {
        while (true) {
         System.out.println("How many players are playing? (Enter 3 or 4):");
         Scanner s = new Scanner(System.in);
-        int ans = s.nextInt();
-        if (ans == (3)) {
-           playerCount = 3;
-           break;
-        } else if (ans == 4) {
-            playerCount = 4;
-            break;
+        if (s.hasNextInt()) {
+            int ans = s.nextInt();
+            if (ans == (3)) {
+               playerCount = 3;
+               break;
+            } else if (ans == 4) {
+                playerCount = 4;
+                break;
+            }
         } else {
             System.out.println("Please enter 3 or 4 players");
         }
@@ -389,6 +405,9 @@ public class HobbyDetectives {
             if(currentPlayer.checkGamestate()){
                 state = GameState.WON;
             }
+            if(allPlayers.stream().allMatch(Player::checkEliminated)){
+                state = GameState.LOST;
+            }
             currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
 
@@ -399,7 +418,15 @@ public class HobbyDetectives {
             System.out.println("Solution: " + solution.getCharacter().getCardName() + " with the " + solution.getWeapon().getCardName() + " in " + solution.getEstate().getCardName());
             System.out.println("It was solved by: " + currentTurn);
             System.out.println("\n------------------------------------------------");
+        }
 
+        if(state == GameState.LOST){
+            System.out.println("\n------------------------------------------------");
+            System.out.println("\nThe murder mystery has failed.");
+            Guess solution = getSolution();
+            System.out.println("Solution: " + solution.getCharacter().getCardName() + " with the " + solution.getWeapon().getCardName() + " in " + solution.getEstate().getCardName());
+            System.out.println("No player correctly solved the murder");
+            System.out.println("\n------------------------------------------------");
         }
     }
 
@@ -409,6 +436,16 @@ public class HobbyDetectives {
 
     public static List<Player> getPlayers(){
         return allPlayers;
+    }
+
+    public static List<Player> getOrderedPlayers(List<Player> playerOrder, Player currentPlayer){
+        List<Player> orderedPlayerList = new ArrayList<>();
+
+        int currentPlayerIndex = playerOrder.indexOf(currentPlayer);
+        for(int i = 1; i<= playerOrder.size(); i++){
+            orderedPlayerList.add(playerOrder.get((currentPlayerIndex + i) % playerOrder.size()));
+        }
+        return orderedPlayerList;
     }
 
     public static ArrayList<Card> getAllCards(){

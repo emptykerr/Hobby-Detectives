@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Estate {
     String name;
@@ -9,6 +11,8 @@ public class Estate {
     int width;
     int height;
     List<Character> characterList;
+
+    Map<Square, String> doors = new HashMap<Square, String>();
     /**
      * Estate can have up to one weapon and up to four characters, characters will be stored
      * within a list. Also has dimensions and coordinates
@@ -22,6 +26,13 @@ public class Estate {
         this.width = w;
         this.height = h;
     }
+
+    public void addDoor(int x, int y, String direction){
+        Square door = Board.getSquare(x,y);
+        doors.put(door, direction);
+        door.setBlocked(false);
+    }
+
 
     public void addWeapon(Weapon w){
         weapon = w;
