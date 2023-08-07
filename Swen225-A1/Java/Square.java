@@ -15,31 +15,69 @@ public class Square{
         estate = null;
     }
 
+    /**
+     * Sets whether the square has a state
+     * @param e
+     */
     public void setEstate(Estate e) {
         estate = e;
     }
 
+    /**
+     * Sets whether the square can be moved onto by a player.
+     * @param b
+     */
     public void setBlocked(Boolean b){
         blocked = b;
     }
 
-
+    /**
+     * Returns whether the square is accessible by a player
+     * @return boolean blocked
+     */
     public boolean isBlocked(){ return blocked; }
 
+    /**
+     * Adds a character to a square
+     * Used for drawing the characters initials on the board
+     * @param c
+     */
     public void addCharacter(Character c){
         character = c;
     }
 
+    /**
+     * Removes a character from a square
+     * Used for removing a players intial from a square
+     * @return
+     */
     public Character removeCharacter(){
         Character toRemove = character;
         character = null;
         return toRemove;
     }
 
+    /**
+     * Returns the character on the square
+     * @return the character on the current square
+     */
     public Character getCharacter(){ return character; }
+
+    /**
+     * Returns the column of the square
+     * @return x
+     */
     public int getX(){ return x; }
+
+    /**
+     * Returns the row of the square
+     * @return y
+     */
     public int getY(){ return y; }
 
+    /**
+     * Draws the characters, estates, doors, or blocked areas squares on the screen as a text display
+     */
     public void draw() {
         if (character != null){
                 System.out.print(character.getColour() + character.getName().toString().charAt(0));
@@ -66,7 +104,11 @@ public class Square{
     }
 
 
-
+    /**
+     * Figures out where the estate title should be drawn within an estate
+     * Consists of two initials
+     * @return whether the square is a title square or not
+     */
     private boolean isEstateTitle(){
         int estateCornerX = estate.getX() + estate.width -2;
         int estateCornerY = estate.getY() + estate.height -2;
@@ -77,6 +119,12 @@ public class Square{
         }
         return false;
     }
+
+    /**
+     * Figures out if the current square is on the border of an estate
+     * for drawing.
+     * @return whether the square is a perimeter estate square
+     */
 
     private boolean isEstateBorder() {
         // Check if the square is on the perimeter of the estate
@@ -96,6 +144,11 @@ public class Square{
         }
         return false;
     }
+
+    /**
+     * Returns the estate of the square
+     * @return estate
+     */
 
     public Estate getEstate() {
         return estate;

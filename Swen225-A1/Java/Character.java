@@ -19,6 +19,8 @@ public class Character {
 
     /**
      * Move character to suggested square
+     * Marks squares as visited, so the player cannot retrack the same steps
+     * in one round
      * - Alex
      */
     public boolean move(Square squareToMove) {
@@ -46,6 +48,11 @@ public class Character {
         return true;
     }
 
+    /**
+     * Used to teleport the character into a given estate
+     * Moves the character into the estate.
+     * @param e
+     */
     public void moveCharacterIntoEstate(Estate e){
         //find the first door in the estate - this returns a valid square in the estate
         Square doorSquare = e.doors.entrySet().iterator().next().getKey();
@@ -53,11 +60,18 @@ public class Character {
         move(doorSquare);
     }
 
+    /**
+     * Finds an empty square in the top 2x2 squares of an estate
+     * to display the characters initial.
+     * @param square
+     * @return a viable square
+     */
     public Square findEmptySquarePlayer(Square square){
         int x = square.getEstate().getX() + 1; //plus one to avoid the border 'X's
         int y = square.getEstate().getY() + 1; //plus one to avoid the border 'X's
         for(int row = x; row < x+2; row++){
             for(int col = y; col < y+2; col++){
+                //if there is an empty square in the top 2x2 squares of an estate, return that square
                 if(Board.getSquare(row, col).getCharacter() == null){
                     return Board.getSquare(row,col);
                 }
@@ -110,22 +124,41 @@ public class Character {
         return newSquare;
     }
 
+    /**
+     * Clears the list of visited squares so the player
+     * can retrack their steps.
+     */
     public void startNewRound() {
         visitedSquares.clear();
     }
 
 
+    /**
+     * Gets the current square the character is on
+     * @return square
+     */
     public Square getSquare() {
         return square;
     }
 
 
-
+    /**
+     * Sets the characters current square
+     * @param square
+     */
     public void setSquare(Square square) {
         this.square = square;
     }
 
+    /**
+     * Gets the colour of the characters text
+     * @return the colour of the character
+     */
     public String getColour() { return colour;}
 
+    /**
+     * Returns the enum equivalent name from HobbyDetectives
+     * @return
+     */
     public HobbyDetectives.PlayerName getName() { return name; }
 }

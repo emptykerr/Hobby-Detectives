@@ -10,7 +10,6 @@ public class Estate {
     int y;
     int width;
     int height;
-    List<Character> characterList;
 
     Map<Square, String> doors = new HashMap<Square, String>();
     /**
@@ -27,26 +26,51 @@ public class Estate {
         this.height = h;
     }
 
+    /**
+     * Adds a door to the estate
+     * Stores it in a map of doors.
+     * Doors are not blocked squares, and allow the players to enter estates
+     * @param x
+     * @param y
+     * @param direction
+     */
+
     public void addDoor(int x, int y, String direction){
         Square door = Board.getSquare(x,y);
         doors.put(door, direction);
         door.setBlocked(false);
     }
 
+    /**
+     * Adds a weapon to the estate
+     * @param w
+     */
 
     public void addWeapon(Weapon w){
         weapon = w;
     }
 
-
+    /**
+     * Retrieves the weapon from the estate
+     * @return weapon
+     */
     public Weapon getWeapon() {
         return weapon;
     }
 
+    /**
+     * Returns the name of the estate
+     * @return name
+     */
     public String getName(){
         return name;
     }
 
+    /**
+     * Returns the estate of a given square
+     * @param s
+     * @return
+     */
     public Estate squarePartOfEstate(Square s){
         if (s.getX() >= x && s.getX() <  x + width && s.getY() >= y && s.getY() < y + height){
             return this;
@@ -55,7 +79,14 @@ public class Estate {
     }
 
 
-
+    /**
+     * The top left x position of an estate
+     * @return
+     */
     public int getX(){ return x; }
+    /**
+     * The top left y position of an estate
+     * @return
+     */
     public int getY(){ return y; }
 }

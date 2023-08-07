@@ -3,7 +3,6 @@ import java.util.*;
 public class HobbyDetectives {
     private static Guess solution;
     private int playerCount;
-    private String playerName;
     private PlayerName currentTurn;
     public GameState state;
     private Board board;
@@ -20,31 +19,75 @@ public class HobbyDetectives {
 
     //COLOURS
     public static final String RESET = "\033[0m";  // Text Reset
-    public static final String BLACK_BOLD = "\033[1;30m";  // BLACK
     public static final String RED_BOLD = "\033[1;31m";    // RED
     public static final String GREEN_BOLD = "\033[1;32m";  // GREEN
     public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
     public static final String BLUE_BOLD = "\033[1;34m";   // BLUE
-    public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
     public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
-    public static final String WHITE_BOLD = "\033[1;37m";  // WHITE
 
     public HobbyDetectives(){
        //initialize fields and perform necessary setup
         playerCount = 4;
     }
 
-    public enum PlayerName{
+
+    /**
+     * Enum representing player names.
+     */
+    public enum PlayerName {
         Lucilla, Bert, Malina, Percy;
-        public static Map<String, PlayerName> playerNameMap = Map.of("lucilla", Lucilla, "bert", Bert, "malina", Malina, "percy", Percy);
+
+        /**
+         * A map to convert lowercase player names to the corresponding enum value.
+         */
+        public static Map<String, PlayerName> playerNameMap = Map.of(
+                "lucilla", Lucilla,
+                "bert", Bert,
+                "malina", Malina,
+                "percy", Percy
+        );
     }
+
+    /**
+     * Enum representing weapon names.
+     */
     public enum WeaponName {
         Broom, Scissors, Knife, Shovel, iPad;
-        public static Map<String, WeaponName> weaponNameMap = Map.of("broom", Broom, "scissors", Scissors, "knife", Knife, "shovel", Shovel, "ipad", iPad);
+
+        /**
+         * A map to convert lowercase weapon names to the corresponding enum value.
+         */
+        public static Map<String, WeaponName> weaponNameMap = Map.of(
+                "broom", Broom,
+                "scissors", Scissors,
+                "knife", Knife,
+                "shovel", Shovel,
+                "ipad", iPad
+        );
     }
+
+    /**
+     * Enum representing estate names.
+     */
     public enum EstateName {
         HauntedHouse, ManicManor, VisitationVilla, PerilPalace, CalamityCastle;
-        public static Map<String, EstateName> estateNameMap = Map.of("haunted house", HauntedHouse, "manic manor", ManicManor, "visitation villa", VisitationVilla, "peril palace", PerilPalace, "calamity castle", CalamityCastle);
+
+        /**
+         * A map to convert lowercase estate names to the corresponding enum value.
+         */
+        public static Map<String, EstateName> estateNameMap = Map.of(
+                "haunted house", HauntedHouse,
+                "manic manor", ManicManor,
+                "visitation villa", VisitationVilla,
+                "peril palace", PerilPalace,
+                "calamity castle", CalamityCastle
+        );
+
+        /**
+         * Overrides the default toString method to provide a formatted version of the enum values.
+         *
+         * @return The formatted string representation of the enum value.
+         */
         @Override
         public String toString() {
             return switch (this) {
@@ -57,7 +100,13 @@ public class HobbyDetectives {
         }
     }
 
-    enum GameState{ ONGOING, WON, LOST }
+    /**
+     * Enum representing the game state.
+     */
+    enum GameState {
+        ONGOING, WON, LOST
+    }
+
     /**
      * Main method
      * initializes the game object
@@ -74,6 +123,9 @@ public class HobbyDetectives {
         game.loop();
     }
 
+    /**
+     * Displays a welcome message to the players.
+     */
     public void displayWelcomeMessage() {
         System.out.println("Welcome to Hobby Detectives!");
         System.out.println("Get ready to solve the mystery...");
@@ -126,6 +178,7 @@ public class HobbyDetectives {
 
     /**
      * Create estates
+     * Hardcoded values
      */
     private void initializeEstates(){
         allEstates.add(new Estate("Haunted House", 2, 2, 5, 5));
@@ -185,17 +238,16 @@ public class HobbyDetectives {
         }
     }
 
+    /**
+     * Adds the doors to each estate
+     * Hardcoded for each estate
+     */
     private void initializeDoors() {
         // Haunted House doors
         allEstates.get(0).addDoor(6, 3, "Right");
         allEstates.get(0).addDoor(5, 6, "Bottom");
 
-//        Board.getSquare(6, 3).setBlocked(false);
-//        Board.getSquare(5,6).setBlocked(false);
 
-        // Manic Manor doors
-//        Board.getSquare(17,5).setBlocked(false);
-//        Board.getSquare(20,6).setBlocked(false);
         allEstates.get(1).addDoor(17,5, "Left");
         allEstates.get(1).addDoor(20,6, "Bottom");
 
@@ -205,22 +257,16 @@ public class HobbyDetectives {
         allEstates.get(2).addDoor(11,13, "Left");
         allEstates.get(2).addDoor(9,12, "Bottom");
 
-//        Board.getSquare(12,10).setBlocked(false);
-//        Board.getSquare(14,11).setBlocked(false);
-//        Board.getSquare(11,13).setBlocked(false);
-//        Board.getSquare(9,12).setBlocked(false);
 
         // Calamity Castle doors
         allEstates.get(3).addDoor(3,17, "Top");
         allEstates.get(3).addDoor(6,18, "Right");
-//        Board.getSquare(3, 17).setBlocked(false);
-//        Board.getSquare(6, 18).setBlocked(false);
+
 
         // Peril Palace doors
         allEstates.get(4).addDoor(18,17, "Top");
         allEstates.get(4).addDoor(17,20, "Left");
-//        Board.getSquare(18, 17).setBlocked(false);
-//        Board.getSquare(17, 20).setBlocked(false);
+
     }
 
     /**
@@ -390,7 +436,7 @@ public class HobbyDetectives {
         int currentPlayerIndex = (int) (Math.random() * 4 + 1);
 
         //for debugging
-        printCheatAnswers();
+//        printCheatAnswers();
 
         while(state == GameState.ONGOING){ // condition for game loop to run
             Player currentPlayer = allPlayers.get(currentPlayerIndex);
@@ -400,6 +446,7 @@ public class HobbyDetectives {
 
             currentPlayer.getCharacter().startNewRound();
             currentPlayer.doTurn();
+
             if(currentPlayer.checkGamestate()){
                 state = GameState.WON;
             }
@@ -409,6 +456,7 @@ public class HobbyDetectives {
             currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
         }
 
+        //prints winning statement
         if(state == GameState.WON){
             System.out.println("\n------------------------------------------------");
             System.out.println("\nThe murder mystery has been solved.");
@@ -418,6 +466,7 @@ public class HobbyDetectives {
             System.out.println("\n------------------------------------------------");
         }
 
+        //prints losing statement
         if(state == GameState.LOST){
             System.out.println("\n------------------------------------------------");
             System.out.println("\nThe murder mystery has failed.");
@@ -428,14 +477,29 @@ public class HobbyDetectives {
         }
     }
 
+    /**
+     * Returns the murder solution
+     * @return
+     */
+
     public static Guess getSolution(){
         return solution;
     }
 
+    /**
+     * Returns all the players in the game
+     * @return
+     */
     public static List<Player> getPlayers(){
         return allPlayers;
     }
 
+    /**
+     * Returns a list of the players, in order from the current player.
+     * @param playerOrder
+     * @param currentPlayer
+     * @return
+     */
     public static List<Player> getOrderedPlayers(List<Player> playerOrder, Player currentPlayer){
         List<Player> orderedPlayerList = new ArrayList<>();
 
@@ -446,8 +510,6 @@ public class HobbyDetectives {
         return orderedPlayerList;
     }
 
-    public static ArrayList<Card> getAllCards(){
-        return allCards;
-    }
+
 
 }

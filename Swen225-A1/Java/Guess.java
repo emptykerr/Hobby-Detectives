@@ -19,9 +19,25 @@ public class Guess {
         guessCards.add(estate);
     }
 
+    /**
+     * Returns the character from a given guess
+     * @return
+     */
     public CharacterCard getCharacter(){ return character; }
+    /**
+     * Returns the weapon from a given guess
+     * @return
+     */
     public WeaponCard getWeapon(){ return weapon; }
+    /**
+     * Returns the character from a given guess
+     * @return
+     */
     public EstateCard getEstate(){ return estate; }
+    /**
+     * Returns the list of cards from a given guess
+     * @return
+     */
     public List<Card> getCards(){ return guessCards; }
 
     /**

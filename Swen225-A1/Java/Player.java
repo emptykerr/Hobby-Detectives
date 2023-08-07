@@ -8,41 +8,38 @@ public class Player {
     private final Board board;
 
     private boolean eliminated = false;
-
     private boolean won = false;
 
-    Player playerChosen = null;
+    private Player playerChosen = null;
 
     public Player(Character c, Board b) {
         character = c;
         board = b;
-        hand = new ArrayList<Card>();
+        hand = new ArrayList<>();
     }
 
     /**
-     * Get the player name
-     * @return enum value of player name
+     * Get the player's name.
+     * @return The enum value representing the player's name.
      */
     public HobbyDetectives.PlayerName getName() {
         return character.getName();
     }
 
     /**
-     * Reveal a card of the players choice
+     * Reveal a card of the player's choice.
      *
-     * @param guess current player's guess
-     * @return the card to be revealed (can be null)
+     * @param guess The current player's guess.
+     * @return The card to be revealed (can be null).
      */
     public Card reveal(Guess guess) {
         List<Card> guessOverlap = new ArrayList<>();
         playerChosen = null;
         int cardNum;
-        // have to loop through all characters to find one that has at least one card that is in the guess
 
         for (Player p : HobbyDetectives.getOrderedPlayers(HobbyDetectives.getPlayers(), this)) {
             if (!p.character.getName().equals(this.character.getName())) {
                 for (Card card : p.hand) {
-                    // Check if player card is part of the guess
                     if (guess.getCards().contains(card)) {
                         playerChosen = p;
                         guessOverlap.add(card);
@@ -54,12 +51,10 @@ public class Player {
                 System.out.println(p.character.getName() + " cannot show");
             }
         }
+
         if (guessOverlap.isEmpty()) {
-            // All players have no cards to reveal
             return null;
         } else {
-            // gives time to swap to the next player so other players cannot see what options the player wants has to
-            // show the player making the guess.
             System.out.println("Pass the tablet to " + playerChosen.character.getName() + " you'll have 10 seconds");
             for (int i = 10; i >= 0; i--){
                 try {
@@ -74,9 +69,9 @@ public class Player {
             for (int i = 0; i < guessOverlap.size(); i++) {
                 System.out.println(i + ": " + guessOverlap.get(i).getCardName());
             }
+
             while (true) {
                 Scanner in = new Scanner(System.in);
-                // Check user gave valid card number
                 if (in.hasNextInt()) {
                     cardNum = in.nextInt();
                     if (cardNum >= 0 && cardNum < guessOverlap.size()) {
@@ -89,6 +84,9 @@ public class Player {
         }
     }
 
+
+
+
     /**
      * returns the current state of the game for the main class
      * @return
@@ -97,10 +95,15 @@ public class Player {
         return won;
     }
 
+    /**
+     * return whether the player has been eliminated to check if turn should be skipped.
+     * @return
+     */
     public boolean checkEliminated(){ return eliminated;}
 
 
     /**
+     * Performs the players turn:
      * Each turn the player will
      * roll 2 die
      * Prompt the player for a direction
@@ -109,6 +112,7 @@ public class Player {
      * Check if the player has entered an estate
      * Offer them to guess or solve
      * Run the required methods
+     *
      * - Matt
      */
     public void doTurn() {
@@ -152,6 +156,11 @@ public class Player {
         // Turn over
     }
 
+    /**
+     * Performs the movement of the player.
+     * Checks if the player is in an estate when their turn starts, and offers them
+     * to leave the said estate, or continue to make a guess.
+     */
     public void doMove() {
         if (character.getSquare().getEstate() != null) {
             while (true) {
@@ -175,6 +184,12 @@ public class Player {
         }
     }
 
+    /**
+     * Moves the player out of the estate, checks every door
+     * the estate has, and offers the player to leave
+     * through one of the doors. Teleports the player to the chosen
+     * door exit.
+     */
     private void moveOutOfEstate(){
         Estate currentEstate = character.getSquare().getEstate();
         System.out.println("Which door would you like to leave through?");
@@ -214,6 +229,11 @@ public class Player {
         }
     }
 
+    /**
+     * Gives the player a move value from two dice rolls.
+     * Perform the move on the game board.
+     * Displays the information of the entered estate, including its name, and its weapon.
+     */
     private void doBoardMove() {
         int die1 = Die.roll();
         int die2 = Die.roll();
@@ -262,21 +282,22 @@ public class Player {
     }
 
     /**
-     * method to make a guess
+     * Perform a guess by the player.
+     * Checks if each player can refute
      */
     public void doGuess() {
         Card card = reveal(inputGuess(character.getSquare().getEstate()));
 
         if (card != null) {
             System.out.println("Pass the tablet back to " + character.getName() + ". You'll have 10 seconds");
-            /**for (int i = 10; i >= 0; i--){
+            for (int i = 10; i >= 0; i--){
                 try {
                     Thread.sleep(1000);
                     System.out.println(i);
                 } catch (InterruptedException ie){
                     System.out.println("Error: " + ie);
                 }
-            }*/
+            }
 
             System.out.println("The card shown to you by " + playerChosen.character.getName() + " is: " + card.getCardName());
         } else {
@@ -360,7 +381,9 @@ public class Player {
 
                 //for each player, find the character that matches the guessed character, and move them into the current estate
                 for(Player p : HobbyDetectives.getPlayers()){
-                    if(characterCard.getCardName().equals(p.getCharacter().getName().name()) && p.getCharacter().getSquare().getEstate() != character.getSquare().getEstate()){
+                    String selectedCharacter = characterCard.getCardName();
+                    String characterFromList = p.getCharacter().getName().name();
+                    if(selectedCharacter.equals(characterFromList) && p.getCharacter().getSquare().getEstate() != character.getSquare().getEstate()){
                         p.getCharacter().moveCharacterIntoEstate(character.getSquare().getEstate());
                     }
                 }
@@ -419,10 +442,18 @@ public class Player {
         hand.add(c);
     }
 
+    /**
+     * Get cards in players hand
+     * @return list of cards in hand
+     */
     public List<Card> getHand(){
         return hand;
     }
 
+    /**
+     * Get the character that belongs to the player
+     * @return the character object
+     */
     public Character getCharacter(){
         return character;
     }

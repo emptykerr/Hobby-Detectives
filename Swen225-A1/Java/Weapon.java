@@ -9,6 +9,10 @@ public class Weapon {
         this.name = name;
     }
 
+    /**
+     * Each estate contains one weapon
+     * @param e
+     */
     public void addEstate(Estate e){
         estate = e;
     }
