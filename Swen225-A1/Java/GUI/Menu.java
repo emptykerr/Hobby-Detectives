@@ -42,6 +42,7 @@ public class Menu {
     }
 
     public void update() {
+
         for(Button mb : buttons)
             mb.update();
     }
@@ -110,7 +111,7 @@ public class Menu {
     }
 
     public void mouseMoved(MouseEvent e) {
-
+        loadButtons();
         for(Button mb : buttons)
             mb.setMouseOver(false);
         for(Button mb : buttons)

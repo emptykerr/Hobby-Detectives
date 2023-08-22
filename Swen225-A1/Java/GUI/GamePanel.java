@@ -23,7 +23,6 @@ public class GamePanel extends JPanel {
 
     public GamePanel(Game game) {
 
-        JLabel currentPlayer = new JLabel ("Testing");
 
 
         mouseInputs = new MouseInputs(this);
