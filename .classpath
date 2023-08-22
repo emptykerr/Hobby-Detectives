@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Swen225-A1/Java"/>
+	<classpathentry kind="output" path="out/production/SWEN225-A1"/>
+</classpath>
