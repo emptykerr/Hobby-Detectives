@@ -12,7 +12,9 @@ public class Menu {
     private Button[] buttons = new Button[2];
     private BufferedImage backgroundImg;
     private BufferedImage wallpaperBackground = LoadSave.GetSpriteAtlas(LoadSave.MENU_WALLPAPER);
+    private BufferedImage titleImg;
     private int menuX, menuY, menuWidth, menuHeight;
+    private int titleX, titleY, titleWidth, titleHeight;
 
     public int backgroundWidth, backgroundHeight;
 
@@ -25,13 +27,18 @@ public class Menu {
     }
 
     private void loadBackground() {
-
-
         backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.MENU_BACKGROUND);
+        titleImg = LoadSave.GetSpriteAtlas(LoadSave.TITLE);
+
         menuWidth = (int) ((backgroundImg.getWidth()*2) * Game.SCALE );
         menuHeight = (int) ((backgroundImg.getHeight()*2) * Game.SCALE );
         menuX = Game.getPanelWidth() / 2 - menuWidth / 2;
         menuY = (int) (( backgroundHeight/3));
+
+        titleWidth = (int) (titleImg.getWidth() * Game.SCALE);
+        titleHeight = (int) (titleImg.getHeight() * Game.SCALE);
+        titleX = Game.getPanelWidth() / 2 - titleWidth/2;
+        titleY = backgroundHeight/8;
     }
 
     private void loadButtons() {
@@ -57,8 +64,8 @@ public class Menu {
         float widthScale = (float) (width / imgWidth);
         float heightScale = (float) (height / imgHeight);
 
-         backgroundWidth = (int)((wallpaperBackground.getWidth() * widthScale) * Game.SCALE);
-         backgroundHeight = (int)((wallpaperBackground.getHeight() * heightScale) * Game.SCALE);
+        backgroundWidth = (int)((wallpaperBackground.getWidth() * widthScale) * Game.SCALE);
+        backgroundHeight = (int)((wallpaperBackground.getHeight() * heightScale) * Game.SCALE);
 
 
         loadBackground();
@@ -67,6 +74,7 @@ public class Menu {
 
         g.drawImage(wallpaperBackground, Game.getPanelWidth()/2 - backgroundWidth/2, 0, backgroundWidth , backgroundHeight, null);
         g.drawImage(backgroundImg, menuX, menuY, menuWidth, menuHeight, null);
+        g.drawImage(titleImg, titleX, titleY, titleWidth, titleHeight, null);
 
         for(Button mb : buttons)
             mb.draw(g);
