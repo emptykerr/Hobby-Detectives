@@ -1,0 +1,45 @@
+class GUI {
+  Cluedo {
+    Setup {
+      Menu {
+        select -> PlayerSelect;
+        quit -> Quit;
+      }
+      Quit {
+      }
+      PlayerSelect {
+          beginTurn -> Move;
+      }
+    }
+    
+    Ongoing {
+      quit -> Quit;
+      [allEliminated] gameLost -> Lost;
+      Guess {
+        do {revealCard();}
+        solveAttempt -> Solving;
+        nextTurn -> Move;
+      }
+      Move {
+        solveAttempt -> Solving;
+        [inEstate] guess -> Guess;
+        nextTurn -> Move;
+      }
+      Solving {
+        [solved] gameWon -> Won;
+        [!solved] playerEliminated -> Move;
+      }
+    }
+    End {
+      playAgain -> Menu;
+      quit -> Quit;
+      Lost {
+        
+      }
+      Won {
+        
+      }
+      
+    }
+  }
+}
