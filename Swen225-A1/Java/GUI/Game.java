@@ -14,6 +14,8 @@ public class Game implements Runnable {
 
     private Menu menu;
 
+    private Ongoing ongoing;
+
 
     public final static int TILES_DEFAULT_SIZE = 32;    //number of pixels for each square. 32*32 for each square.
     public static float SCALE = 1.0f; //use this to scale every variable
@@ -38,6 +40,7 @@ public class Game implements Runnable {
 
     private void initClasses() {
         menu = new Menu(this);
+        ongoing = new Ongoing(this);
     }
 
     private void startGameLoop() {
@@ -54,7 +57,7 @@ public class Game implements Runnable {
                 menu.update();
                 break;
             case ONGOING:
-                System.out.println("Alex where did you go we need you");
+                ongoing.update();
                 break;
             case QUIT:
                 System.exit(0);
