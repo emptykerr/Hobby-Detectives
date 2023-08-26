@@ -12,6 +12,7 @@ public class LoadSave {
     public static final String BUTTONS = "button_atlas.png";
     public static final String MENU_BACKGROUND = "menu_background.png";
     public static final String MENU_WALLPAPER = "background_menu.png";
+    public static final String ONGOING_WALLPAPER = "ongoing_background.png";
 
     public static final String TITLE = "HobbyDetectivesTitle.png";
 

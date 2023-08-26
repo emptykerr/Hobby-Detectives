@@ -51,8 +51,6 @@ public class Game implements Runnable {
 
     public void update() {
         switch (state) {
-
-
             case MENU:
                 menu.update();
                 break;
@@ -78,6 +76,9 @@ public class Game implements Runnable {
                 menu.draw(g);
                 break;
 
+            case ONGOING:
+                ongoing.draw(g);
+                break;
 
             default:
                 break;
