@@ -61,4 +61,65 @@ public class Board {
 			System.out.print("\n");
 		}
 	}
+
+	/**
+	 * For testing purposes. Creates a testing board from string input
+	 */
+	public static void createTestBoard(String input){
+		System.out.println(input.length());
+		int x = 0; 
+		int y = 0;
+		for (int i = 0; i < input.length(); i++){
+			if (i == 22){
+				System.out.println();
+			}
+			if (x > 23) {x = 0;}
+			if (input.charAt(i) == '\n'){
+				y++;
+			}
+			if (input.charAt(i) == '.'){
+				addSquare(new Square(x, y), x, y);
+				x++;
+			}
+			if (input.charAt(i) == 'X'){
+				Square s = new Square(x, y);
+				s.setBlocked(true);
+				addSquare(s, x, y);
+				x++;
+			}
+		}
+	}
+
+	public static void createTestBoard(String input, Estate e){
+		System.out.println(input.length());
+		int x = 0; 
+		int y = 0;
+		for (int i = 0; i < input.length(); i++){
+			if (i == 22){
+				System.out.println();
+			}
+			if (x > 23) {x = 0;}
+			if (input.charAt(i) == '\n'){
+				y++;
+			}
+			if (input.charAt(i) == '.'){
+				addSquare(new Square(x, y), x, y);
+				x++;
+			}
+			if (input.charAt(i) == 'X'){
+				Square s = new Square(x, y);
+				s.setBlocked(true);
+				addSquare(s, x, y);
+				x++;
+			}
+			if (input.charAt(i) == 'E'){
+				Square s = new Square(x, y);
+				s.setEstate(e);
+				addSquare(s, x, y);
+				x++;
+			}
+			
+			
+		}
+	}
 }
