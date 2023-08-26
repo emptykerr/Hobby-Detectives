@@ -70,7 +70,8 @@ public class CharacterTest {
         Square s = Board.getSquare(1, 1);
         main.Character character = new main.Character(s, HobbyDetectives.PlayerName.Bert, "\033[1;31m");
         character.move(Board.getSquare(0, 1));
-
+        assertEquals(Board.getSquare(1, 1), character.getSquare());
+        character.move(Board.getSquare(24, 1));
         assertEquals(Board.getSquare(1, 1), character.getSquare());
     }
 
