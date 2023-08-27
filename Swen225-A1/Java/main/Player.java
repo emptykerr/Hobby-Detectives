@@ -31,7 +31,6 @@ public class Player {
         character = c;
         board = b;
         game = g;
-        //ongoingView = g.getOngoingView();
         hand = new ArrayList<>();
     }
 
@@ -134,6 +133,7 @@ public class Player {
      * Run the required methods
      */
     public void doTurn() {
+        ongoingView = game.getOngoingView();
         if (eliminated) {
             System.out.println(character.getName() + " is eliminated");
             ongoingView.printToUI(character.getName() + " is eliminated");
