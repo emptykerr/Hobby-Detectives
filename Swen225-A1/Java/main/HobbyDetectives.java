@@ -441,7 +441,7 @@ public class HobbyDetectives {
 	 * if state is won, print out the solution, and who it was solved by
 	 */
 	public void loop() {
-		int currentPlayerIndex = (int) (Math.random() * playerCount + 1); // get index of first player
+		int currentPlayerIndex = (int) (Math.random() * playerCount); // get index of first player
 		System.out.println(state);
 		while (state == GameState.MENU) {
 
