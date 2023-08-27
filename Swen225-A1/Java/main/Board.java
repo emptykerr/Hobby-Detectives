@@ -55,7 +55,7 @@ public class Board {
 	 * The text display in the console, will display each board square, players, and
 	 * estates
 	 */
-	public void drawToScreen() {
+	public static void drawToScreen() {
 		for (int y = 0; y < Board.getLength(); y++) {
 			for (int x = 0; x < Board.getLength(); x++) {
 				Board.getSquare(x, y).draw();
