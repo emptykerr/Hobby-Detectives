@@ -208,7 +208,7 @@ public class HobbyDetectives {
 		for (int row = x; row < x + width; row++) {
 			for (int col = y; col < y + height; col++) {
 				Square square = new Square(row, col);
-				board.addSquare(square, row, col);
+				Board.addSquare(square, row, col);
 
 				square.setBlocked(true);
 			}
@@ -229,11 +229,10 @@ public class HobbyDetectives {
 	 * creates the squares and estates on the board
 	 */
 	public void initializeBoard() {
-		board = new Board();
-		for (int x = 0; x < board.getLength(); x++) {
-			for (int y = 0; y < board.getLength(); y++) {
+		for (int x = 0; x < Board.getLength(); x++) {
+			for (int y = 0; y < Board.getLength(); y++) {
 				Square square = new Square(x, y);
-				board.addSquare(square, x, y);
+				Board.addSquare(square, x, y);
 				for (Estate e : allEstates) {
 					if (e.squarePartOfEstate(square) != null) { // check if current square is part of estate
 						square.setBlocked(true); // add estate to square
@@ -453,7 +452,7 @@ public class HobbyDetectives {
 			Player currentPlayer = allPlayers.get(currentPlayerIndex);
 			currentTurn = currentPlayer.getCharacter().getName();
 			// Display the current game state
-			board.drawToScreen();
+			Board.drawToScreen();
 
 			currentPlayer.getCharacter().startNewRound();
 			currentPlayer.doTurn();
