@@ -15,7 +15,9 @@ public class Player {
     private final Character character;
     private final List<Card> hand;
     private final Board board;
+    private HobbyDetectives game;
 
+    
     private Ongoing ongoingView;
 
     private boolean eliminated = false;
@@ -28,7 +30,8 @@ public class Player {
         this.name = name;
         character = c;
         board = b;
-        ongoingView = g.getOngoingView();
+        game = g;
+        //ongoingView = g.getOngoingView();
         hand = new ArrayList<>();
     }
 
