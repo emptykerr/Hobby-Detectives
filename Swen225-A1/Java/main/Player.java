@@ -1,22 +1,34 @@
 package main;
 
+import view.Ongoing;
+
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * A player instance represents a player playing the game.
+ * Handles the user input for that player which controls a character
+ * A player does a turn, makes guesses, makes solve attempt
+ */
 public class Player {
     private final Character character;
     private final List<Card> hand;
     private final Board board;
 
+    private Ongoing ongoingView;
+
     private boolean eliminated = false;
     private boolean won = false;
 
+    private String name;
     private Player playerChosen = null;
 
-    public Player(Character c, Board b) {
+    public Player(String name, Character c, Board b, HobbyDetectives g) {
+        this.name = name;
         character = c;
         board = b;
+        ongoingView = g.getOngoingView();
         hand = new ArrayList<>();
     }
 
@@ -25,8 +37,8 @@ public class Player {
      *
      * @return The enum value representing the player's name.
      */
-    public HobbyDetectives.PlayerName getName() {
-        return character.getName();
+    public String getName() {
+        return name;
     }
 
     /**
@@ -117,17 +129,17 @@ public class Player {
      * Check if the player has entered an estate
      * Offer them to guess or solve
      * Run the required methods
-     * <p>
-     * - Matt
      */
     public void doTurn() {
         if (eliminated) {
             System.out.println(character.getName() + " is eliminated");
+            ongoingView.printToUI(character.getName() + " is eliminated");
             System.out.println("Skipping turn...");
             return;
         }
 
         System.out.println("It is " + getName() + "'s turn");
+        ongoingView.printToUI("It is " + getName() + "'s turn");
         doMove();
 
         while (true) {
@@ -135,11 +147,13 @@ public class Player {
                 break;
             }
             System.out.println("Would you like to make a solve attempt? (Y/N)");
-            Scanner s = new Scanner(System.in);
-            String ans = s.nextLine().toUpperCase();
-            if (ans.equals("Y")) {
+            //Scanner s = new Scanner(System.in);
+            //String ans = s.nextLine().toUpperCase();
+            boolean solveAttempt = ongoingView.askSolveAttempt(this);
+            if (solveAttempt) {
                 if (doSolveAttempt()) {
                     System.out.println("You solved correctly!");
+                    ongoingView.printToUI("You solved correctly!");
                     won = true;
                 } else {
                     System.out.println("\n----------------------------------------");
@@ -148,14 +162,10 @@ public class Player {
                     System.out.println("----------------------------------------\n");
                     eliminated = true;
                     System.out.println("Press enter to continue");
-                    s.nextLine();
-
                 }
                 break;
-            } else if (ans.equals("N")) {
-                break;
             } else {
-                System.out.println("Put either 'Y' or 'N' (is not case sensitive)");
+                break;
             }
         }
         // Turn over
@@ -169,19 +179,17 @@ public class Player {
     public void doMove() {
         if (character.getSquare().getEstate() != null) {
             while (true) {
-                System.out.println("Would you like to leave the estate? (Y/N)");
-                Scanner s = new Scanner(System.in);
-                String ans = s.nextLine().toUpperCase();
-                if (ans.equals("Y")) {
+                //System.out.println("Would you like to leave the estate? (Y/N)");
+                //Scanner s = new Scanner(System.in);
+                //String ans = s.nextLine().toUpperCase();
+                boolean leaveEstate = ongoingView.askLeaveEstate(this);
+                if (leaveEstate) {
                     character.getSquare().removeCharacter();
                     moveOutOfEstate();
-//                    doBoardMove();
-                    return;
-                } else if (ans.equals("N")) {
-                    doGuess();
                     return;
                 } else {
-                    System.out.println("Put either 'Y' or 'N' (is not case sensitive)");
+                    doGuess();
+                    return;
                 }
             }
         } else {
@@ -207,7 +215,7 @@ public class Player {
         while (character.getSquare().getEstate() != null) {
             System.out.println("Enter 'U', 'D', 'L', or 'R' to move");
             Scanner in = new Scanner(System.in);
-            String direction = in.nextLine().toUpperCase();
+            String direction = ongoingView.askDoorDirection(this);
 
             String moveDirection = switch (direction) {
                 case "U" -> "Top";
@@ -226,6 +234,7 @@ public class Player {
             if (character.step(direction) != null) {
                 board.drawToScreen();
                 System.out.println("You exited through the " + moveDirection + " door");
+                ongoingView.printToUI("You exited through the " + moveDirection + " door");
                 doBoardMove();
                 break;
             } else {
@@ -244,6 +253,7 @@ public class Player {
         int die2 = Die.roll();
         int moves = die1 + die2;
         System.out.println("You have " + this.getHand().size() + " cards");
+        ongoingView.printToUI("You have " + this.getHand().size() + " cards");
         for (Card card : this.getHand()) {
             System.out.println(card.getClass().toString().substring(card.getClass().toString().lastIndexOf(" ") + 1) + ": " + card.getCardName());
         }

@@ -1,5 +1,8 @@
 package main;
 
+/**
+ * Represnts a die that can give numbers
+ */
 public class Die {
     /**
      * @roll to get a value from 1 to 6 meaning how many squares the character can move

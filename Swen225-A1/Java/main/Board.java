@@ -1,5 +1,9 @@
 package main;
 
+/**
+ * The board contains the squares that make up the board.
+ * It takes care of accessing, altering and drawing all the squares that make up the board
+ */
 public class Board {
 	private static int length = 24;
 	private static Square[][] board = new Square[length][length];
@@ -56,7 +60,7 @@ public class Board {
 			for (int x = 0; x < Board.getLength(); x++) {
 				Board.getSquare(x, y).draw();
 				System.out.print(" ");
-				System.out.print(HobbyDetectives.RESET + " ");
+				System.out.print(" ");
 			}
 			System.out.print("\n");
 		}
@@ -70,9 +74,6 @@ public class Board {
 		int x = 0; 
 		int y = 0;
 		for (int i = 0; i < input.length(); i++){
-			if (i == 22){
-				System.out.println();
-			}
 			if (x > 23) {x = 0;}
 			if (input.charAt(i) == '\n'){
 				y++;
@@ -91,13 +92,9 @@ public class Board {
 	}
 
 	public static void createTestBoard(String input, Estate e){
-		System.out.println(input.length());
 		int x = 0; 
 		int y = 0;
 		for (int i = 0; i < input.length(); i++){
-			if (i == 22){
-				System.out.println();
-			}
 			if (x > 23) {x = 0;}
 			if (input.charAt(i) == '\n'){
 				y++;

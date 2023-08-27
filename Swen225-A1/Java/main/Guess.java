@@ -2,6 +2,9 @@ package main;
 
 import java.util.*;
 
+/**
+ * Represents a guess made up of character, weapon and estate
+ */
 public class Guess {
     CharacterCard character;
     WeaponCard weapon;

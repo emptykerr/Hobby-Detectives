@@ -1,13 +1,12 @@
 package main;
 
+/**
+ * Represnts a weapon in the game. Weapons can be contained in an estate and used in guesses
+ */
 public class Weapon {
     String name;
     Estate estate;
 
-    /**
-     * Weapon has only a name
-     * - Mathias
-     */
     public Weapon(String name) {
         this.name = name;
     }
@@ -21,6 +20,11 @@ public class Weapon {
         estate = e;
     }
 
+    /**
+     * Returns the name of the weapon
+     *
+     * @return weapon name
+     */
     public String getName() {
         return name;
     }

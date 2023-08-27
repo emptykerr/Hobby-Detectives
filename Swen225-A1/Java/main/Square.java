@@ -1,5 +1,7 @@
 package main;
 
+import java.awt.*;
+
 /**
  * Square consists of up to one character, up to four walls (bools) and up to
  * one estate - Mathias
@@ -97,30 +99,36 @@ public class Square {
 	 * Draws the characters, estates, doors, or blocked areas squares on the screen
 	 * as a text display
 	 */
-	public void draw() {
-		if (character != null) {
-			System.out.print(character.getColour() + character.getName().toString().charAt(0));
-		} else {
-			if (blocked && isEstateBorder()) {
-				System.out.print("X");
-			} else if (blocked && estate == null) {
-				System.out.print("X");
+	public Color draw() {
 
-			} else if (isEstateBorder() && estate != null) {
-				System.out.print(HobbyDetectives.GREEN_BOLD + "/");
+		boolean wall = blocked && isEstateBorder();
+		boolean unreachableSquare = blocked && estate == null;
+		boolean door = isEstateBorder() && estate !=null;
+		if (character != null) {
+			return character.getColour();
+		} else {
+			if (wall) {
+				return Color.BLACK;
+			} else if (unreachableSquare) {
+				return Color.LIGHT_GRAY;
+			} else if (door) {
+				return HobbyDetectives.BROWN;
 			} else {
 				if (estate != null) {
-					if (isEstateTitle()) {
-						System.out.print(HobbyDetectives.CYAN_BOLD + estate.getName().charAt(0));
-					} else {
-						System.out.print(" ");
-					}
+//					if (isEstateTitle()) {
+//						return HobbyDetectives.CYAN_BOLD;
+//					} else {
+//						System.out.print(" ");
+//					}
+					return HobbyDetectives.CYAN_BOLD;
 				} else {
-					System.out.print("_");
+					return new Color(209, 192, 168);
 				}
 			}
 		}
 	}
+
+
 
 	/**
 	 * Figures out where the estate title should be drawn within an estate Consists

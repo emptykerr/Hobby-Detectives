@@ -1,10 +1,12 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents an estate in the game
+ * Can contain characters and a weapon. Is represented with an area and coordinates
+ */
 public class Estate {
     String name;
     Weapon weapon;
@@ -18,7 +20,6 @@ public class Estate {
     /**
      * Estate can have up to one weapon and up to four characters, characters will be stored
      * within a list. Also has dimensions and coordinates
-     * -Mathias
      */
 
     public Estate(String name, int x, int y, int w, int h) {

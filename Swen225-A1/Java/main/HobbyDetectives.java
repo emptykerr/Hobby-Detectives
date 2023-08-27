@@ -1,37 +1,56 @@
 package main;
+import view.GUI;
+import view.Ongoing;
 
-import GUI.Game;
-
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
+/**
+ * A HobbyDetectives instance represents a running game of Hobby Detectives.
+ * It takes care of handling the commands from GUI, initialising the game components
+ * and running the main game loop
+ */
 public class HobbyDetectives {
 	private static Guess solution;
 	private int playerCount;
-	private PlayerName currentTurn;
-	public static GameState state = GameState.MENU;
+	public  PlayerName currentTurn;
+	public GameState state = GameState.MENU;
 	private Board board;
+	private Ongoing ongoingView;
+
+	//Lists that contain all game objects
 	private static ArrayList<Player> allPlayers = new ArrayList<>();
 	private static ArrayList<Character> allCharacters = new ArrayList<>();
 	private static ArrayList<Card> allCards = new ArrayList<>();
 	private static ArrayList<Estate> allEstates = new ArrayList<>();
 	private static ArrayList<Weapon> allWeapons = new ArrayList<>();
+
 	private ArrayList<Card> tempDeck = new ArrayList<>();
 
+	// Maps that connect the names if game objects to their corresponding cards
 	public static final Map<String, CharacterCard> characterMap = new HashMap<>();
 	public static final Map<String, WeaponCard> weaponMap = new HashMap<>();
 	public static final Map<String, EstateCard> estateMap = new HashMap<>();
 
-	// COLOURS
-	public static final String RESET = "\033[0m"; // Text Reset
-	public static final String RED_BOLD = "\033[1;31m"; // RED
-	public static final String GREEN_BOLD = "\033[1;32m"; // GREEN
-	public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
-	public static final String BLUE_BOLD = "\033[1;34m"; // BLUE
-	public static final String CYAN_BOLD = "\033[1;36m"; // CYAN
+	// Colours
+//	public static final String RED_BOLD = "\033[1;31m"; // RED
+//	public static final String GREEN_BOLD = "\033[1;32m"; // GREEN
+//	public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
+//	public static final String BLUE_BOLD = "\033[1;34m"; // BLUE
+//	public static final String CYAN_BOLD = "\033[1;36m"; // CYAN
+
+	public static final Color RESET = Color.DARK_GRAY;
+	public static final Color RED_BOLD = Color.RED;
+	public static final Color GREEN_BOLD = Color.GREEN;
+	public static final Color YELLOW_BOLD = Color.YELLOW;
+	public static final Color BLUE_BOLD = Color.BLUE;
+	public static final Color CYAN_BOLD = Color.CYAN;
+	public static final Color BROWN = new Color(153, 102, 51); // BROWN
 
 	public HobbyDetectives() {
 		// initialize fields and perform necessary setup
-		playerCount = 4;
+		playerCount = 0;
 	}
 
 	/**
@@ -96,20 +115,19 @@ public class HobbyDetectives {
 	 */
 	public enum GameState {
 		ONGOING, WON, LOST, MENU, QUIT;
-
-		public static GameState state = MENU;
 	}
 
 	/**
-	 * Main method initializes the game object setups up the game runs game loop
+	 * Main method initializes the game object setups up the game, runs game loop and calls GUI
 	 *
-	 * @param args - Matt
+	 * @param args
 	 */
 	public static void main(String[] args) {
-		new Game();
+//		new Game();
+		new GUI();
 		HobbyDetectives game = new HobbyDetectives();
-		game.displayWelcomeMessage();
-		game.displayGameRules();
+		//game.displayWelcomeMessage();
+		//game.displayGameRules();
 		game.setup();
 		game.loop();
 	}
@@ -152,6 +170,7 @@ public class HobbyDetectives {
 	 * player Allows player selection Initializes all elements - Matt
 	 */
 	public void setup() {
+
 		System.out.println("\nAre you ready to begin?");
 		initializeEstates();
 		initializeBoard();
@@ -159,10 +178,9 @@ public class HobbyDetectives {
 		initializeUnreachableSquares();
 		initializeCards();
 		initializeCharacters();
-		initializePlayers();
-		distributeCards();
 		initializeWeapons();
-		state = GameState.ONGOING;
+		//initializePlayers();
+		//distributeCards();
 	}
 
 	/**
@@ -217,8 +235,8 @@ public class HobbyDetectives {
 				Square square = new Square(x, y);
 				board.addSquare(square, x, y);
 				for (Estate e : allEstates) {
-					if (e.squarePartOfEstate(square) != null) {
-						square.setBlocked(true);
+					if (e.squarePartOfEstate(square) != null) { // check if current square is part of estate
+						square.setBlocked(true); // add estate to square
 						square.setEstate(e);
 					}
 				}
@@ -233,7 +251,6 @@ public class HobbyDetectives {
 		// Haunted House doors
 		allEstates.get(0).addDoor(6, 3, "Right");
 		allEstates.get(0).addDoor(5, 6, "Bottom");
-
 		allEstates.get(1).addDoor(17, 5, "Left");
 		allEstates.get(1).addDoor(20, 6, "Bottom");
 
@@ -250,25 +267,27 @@ public class HobbyDetectives {
 		// Peril Palace doors
 		allEstates.get(4).addDoor(18, 17, "Top");
 		allEstates.get(4).addDoor(17, 20, "Left");
-
 	}
 
 	/**
 	 * Create each card Add cards to the solution
 	 */
 	private void initializeCards() {
+		// Creates player cards
 		for (PlayerName p : PlayerName.values()) {
 			CharacterCard c = new CharacterCard(p.toString());
 			characterMap.put(p.toString(), c);
 			allCards.add(c);
 		}
 
+		// Creates weapon cards
 		for (WeaponName w : WeaponName.values()) {
 			WeaponCard c = new WeaponCard(w.toString());
 			weaponMap.put(w.toString(), c);
 			allCards.add(c);
 		}
 
+		// Creates estate cards
 		for (EstateName e : EstateName.values()) {
 			EstateCard c = new EstateCard(e.toString());
 			estateMap.put(e.toString(), c);
@@ -286,49 +305,59 @@ public class HobbyDetectives {
 		allCharacters.add(new Character(Board.getSquare(22, 14), PlayerName.Percy, RED_BOLD));
 	}
 
-	/**
-	 * Create players Asks the user how many players to play.
-	 */
-	private void initializePlayers() {
-		while (true) {
-			System.out.println("How many players are playing? (Enter 3 or 4):");
-			Scanner s = new Scanner(System.in);
-			if (s.hasNextInt()) {
-				int ans = s.nextInt();
-				if (ans == (3)) {
-					playerCount = 3;
-					break;
-				} else if (ans == 4) {
-					playerCount = 4;
-					break;
-				}
-			} else {
-				System.out.println("Please enter 3 or 4 players");
-			}
-		}
-
-		for (int i = 0; i < playerCount; i++) {
-			allPlayers.add(new Player(allCharacters.get(i), board));
-		}
-
+	public void addPlayer(String name, String character) {
+		Character ch = allCharacters.stream().filter(c -> c.getName().toString().equals(character)).findFirst().get();
+		allPlayers.add(new Player(name, ch, board, this));
+		playerCount++;
 	}
+
+//	/**
+//	 * Create players Asks the user how many players to play.
+//	 */
+//	private void initializePlayers() {
+////		while (true) {
+////			System.out.print("How many players are playing? (Enter 3 or 4): ");
+////			Scanner s = new Scanner(System.in);
+////			if (s.hasNextInt()) {
+////				int ans = s.nextInt();
+////				if (ans == (3)) {
+////					playerCount = 3;
+////					break;
+////				} else if (ans == 4) {
+////					playerCount = 4;
+////					break;
+////				}
+////			} else {
+////				System.out.println("Please enter 3 or 4 players");
+////			}
+////			s.close();
+////		}
+//
+//		for (int i = 0; i < playerCount; i++) {
+//			allPlayers.add(new Player(allCharacters.get(i), board, this));
+//		}
+//	}
 
 	/**
 	 * Distributes cards evenly between players
 	 */
-	private void distributeCards() {
-		Collections.shuffle(allCards);
-		tempDeck = new ArrayList<>(allCards);
-		solution = generateSolution();
-		int playerIndex = 0;
-		while (!tempDeck.isEmpty()) {
-			Player currentPlayer = allPlayers.get(playerIndex);
-			Card c = tempDeck.get((int) (Math.random() * tempDeck.size()));
-			currentPlayer.addCard(c);
-			tempDeck.remove(c);
-			playerIndex = (playerIndex + 1) % playerCount;
+	public void distributeCards() {
+		if (state.equals(GameState.MENU)) {
+			Collections.shuffle(allCards);
+			tempDeck = new ArrayList<>(allCards);
+			solution = generateSolution();
+			int playerIndex = 0;
+			while (!tempDeck.isEmpty()) {
+				Player currentPlayer = allPlayers.get(playerIndex);
+				Card c = tempDeck.get((int) (Math.random() * tempDeck.size()));
+				currentPlayer.addCard(c);
+				tempDeck.remove(c);
+				playerIndex = (playerIndex + 1) % playerCount;
+			}
+		} else {
+			System.out.println("Failed to distribute cards due to not being in MENU state");
 		}
-
+		printCheatAnswers();
 	}
 
 	/**
@@ -352,8 +381,6 @@ public class HobbyDetectives {
 
 	/**
 	 * Create weapons and randomly add to estates
-	 *
-	 * @return
 	 */
 	private void initializeWeapons() {
 		allWeapons.add(new Weapon("Broom"));
@@ -372,7 +399,7 @@ public class HobbyDetectives {
 	/**
 	 * Create a guess object that is the solution for the game
 	 *
-	 * @return
+	 * @return Guess the generated solution
 	 */
 	private Guess generateSolution() {
 		WeaponCard weapon;
@@ -412,18 +439,19 @@ public class HobbyDetectives {
 	/**
 	 * The game loop, runs the game logic, and allows each player to play during
 	 * their turn
-	 * <p>
 	 * if state is won, print out the solution, and who it was solved by
 	 */
 	public void loop() {
-		int currentPlayerIndex = (int) (Math.random() * 4 + 1);
+		int currentPlayerIndex = (int) (Math.random() * playerCount + 1); // get index of first player
+		System.out.println(state);
+		while (state == GameState.MENU) {
 
-		// for debugging
-//        printCheatAnswers();
+		}
 
 		while (state == GameState.ONGOING) { // condition for game loop to run
+			System.out.println(state);
 			Player currentPlayer = allPlayers.get(currentPlayerIndex);
-			currentTurn = currentPlayer.getName();
+			currentTurn = currentPlayer.getCharacter().getName();
 			// Display the current game state
 			board.drawToScreen();
 
@@ -438,6 +466,7 @@ public class HobbyDetectives {
 			}
 			currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
 		}
+
 
 		// prints winning statement
 		if (state == GameState.WON) {
@@ -467,7 +496,6 @@ public class HobbyDetectives {
 	 *
 	 * @return
 	 */
-
 	public static Guess getSolution() {
 		return solution;
 	}
@@ -481,12 +509,16 @@ public class HobbyDetectives {
 		return allPlayers;
 	}
 
+	public int getPlayerCount(){
+		return this.playerCount;
+	}
+
 	/**
 	 * Returns a list of the players, in order from the current player.
 	 *
 	 * @param playerOrder
 	 * @param currentPlayer
-	 * @return
+	 * @return list of players in order
 	 */
 	public static List<Player> getOrderedPlayers(List<Player> playerOrder, Player currentPlayer) {
 		List<Player> orderedPlayerList = new ArrayList<>();
@@ -498,12 +530,48 @@ public class HobbyDetectives {
 		return orderedPlayerList;
 	}
 
-	public static GameState getGamestate(){
+	/**
+	 * Sets the player count
+	 *
+	 * @param playerCount
+	 */
+	public void setPlayerCount(int playerCount) {
+		this.playerCount = playerCount;
+	}
+
+	/**
+	 * Returns the gamestate
+	 *
+	 * @return
+	 */
+	public GameState getGamestate(){
 		return state;
 	}
 
+	/**
+	 * Sets the gamestate of the game
+	 *
+	 * @param state
+	 */
 	public void setGamestate(GameState state){
 		this.state = state;
 	}
 
+	/**
+	 * Set ongoingview
+	 *
+	 * @param og the Ongoing instance
+	 */
+	public void setOngoingView(Ongoing og){
+		ongoingView = og;
+	}
+
+	/**
+	 * Returns the ongoing view
+	 *
+	 * @return the ongoing view
+	 */
+	public Ongoing getOngoingView(){
+		return ongoingView;
+	}
 }

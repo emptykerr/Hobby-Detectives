@@ -1,17 +1,20 @@
 package main;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
-import main.*;
+
+/**
+ * An instance of Character represnts an idividual character on the HobbyDetectives board
+ * A character can move around on the board and each Player has a Character
+ */
 public class Character {
     private HobbyDetectives.PlayerName name;
     private Square square;
-
-    private String colour;
+    private Color colour;
     private Set<Square> visitedSquares = new HashSet<>();
 
-
-    public Character(Square square, HobbyDetectives.PlayerName name, String colour) {
+    public Character(Square square, HobbyDetectives.PlayerName name, Color colour) {
         this.name = name;
         this.square = square;
         this.colour = colour;
@@ -20,10 +23,10 @@ public class Character {
     }
 
     /**
-     * Move character to suggested square
-     * Marks squares as visited, so the player cannot retrack the same steps
-     * in one round
-     * - Alex
+     * Move character to suggested square.
+     *
+     * @param squareToMove the square to move to
+     * @return True if successful false if not
      */
     public boolean move(Square squareToMove) {
         if (squareToMove.getEstate() != null && !squareToMove.isBlocked()) {
@@ -54,7 +57,7 @@ public class Character {
      * Used to teleport the character into a given estate
      * Moves the character into the estate.
      *
-     * @param e
+     * @param e the estate to teleport character into
      */
     public void moveCharacterIntoEstate(Estate e) {
         //find the first door in the estate - this returns a valid square in the estate
@@ -87,7 +90,9 @@ public class Character {
 
     /**
      * Steps the character (up, down, left or right) depending on string parameter.
-     * - Alex
+     *
+     * @param direction which direction to step
+     * @return the square that has been stepped to. Will be null if the step is not allowed
      */
     public Square step(String direction) {
         Square newSquare = switch (direction) {
@@ -136,7 +141,6 @@ public class Character {
         visitedSquares.clear();
     }
 
-
     /**
      * Gets the current square the character is on
      *
@@ -161,7 +165,7 @@ public class Character {
      *
      * @return the colour of the character
      */
-    public String getColour() {
+    public Color getColour() {
         return colour;
     }
 
