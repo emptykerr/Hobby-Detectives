@@ -63,6 +63,8 @@ public class Player {
         List<Card> guessOverlap = new ArrayList<>();
         playerChosen = null;
 
+        ongoingView.updateGrid();
+
         for (Player p : HobbyDetectives.getOrderedPlayers(HobbyDetectives.getPlayers(), this)) {
             if (!p.character.getName().equals(this.character.getName())) {
                 for (Card card : p.hand) {
@@ -77,6 +79,8 @@ public class Player {
                 ongoingView.printToUI(p.character.getName() + " cannot show");
             }
         }
+
+
 
         if (guessOverlap.isEmpty()) {
             return null;
@@ -214,6 +218,7 @@ public class Player {
 
         Card card = reveal(inputGuess(character.getSquare().getEstate()));
 
+
         if (card != null) {
             ongoingView.printToUI("Pass the tablet back to " + character.getName());
             ongoingView.printToUI("The card shown to you by " + playerChosen.character.getName() + " is: " + card.getCardName());
@@ -307,6 +312,26 @@ public class Player {
     private WeaponCard selectWeapon() {
         String weaponName = ongoingView.askCardDropdown(HobbyDetectives.weaponMap.keySet().toArray());
         WeaponCard weaponCard = HobbyDetectives.weaponMap.get(weaponName);
+        Estate currentEstate = character.getSquare().getEstate();
+        Weapon currentEstateWeapon = currentEstate.getWeapon();
+        Estate toSwapEstate = null;
+        Weapon toSwapWeapon = null;
+
+        for (Weapon w : HobbyDetectives.getWeapons()) {
+            if (w.getName().equals(weaponCard.getCardName())) {
+                toSwapWeapon = w;
+                toSwapEstate = w.getEstate();
+            }
+        }
+
+        // make swap
+        if (toSwapWeapon != null && toSwapEstate != null) {
+            currentEstate.setWeapon(toSwapWeapon);
+            toSwapEstate.setWeapon(currentEstateWeapon);
+            currentEstate.getWeaponSquare().setWeapon(toSwapWeapon);
+            toSwapEstate.getWeaponSquare().setWeapon(currentEstateWeapon);
+        }
+
         return weaponCard;
     }
 
@@ -359,11 +384,6 @@ public class Player {
      */
     public String getActionPerformed(){
         return actionPerformed;
-    }
-
-
-    public void setChecklistSelected(){
-
     }
 
     public ChecklistPanel getChecklist(){

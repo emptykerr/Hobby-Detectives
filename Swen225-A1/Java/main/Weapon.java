@@ -9,15 +9,22 @@ public class Weapon {
 
     public Weapon(String name) {
         this.name = name;
+        this.estate = null;
     }
 
     /**
-     * Each estate contains one weapon
-     *
-     * @param e
+     * Set the estate for this weapon;
      */
-    public void addEstate(Estate e) {
+    public void setEstate(Estate e) {
         estate = e;
+    }
+
+    /**
+     * Get the estate for this weapon
+     * @return
+     */
+    public Estate getEstate() {
+        return estate;
     }
 
     /**

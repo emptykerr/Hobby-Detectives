@@ -67,6 +67,15 @@ public class Character {
     }
 
     /**
+     *
+     * @param w1 the first weapon
+     * @param w2 the second weapon
+     */
+    public void moveWeaponIntoEstate(Weapon w1, Weapon w2) {
+
+    }
+
+    /**
      * Finds an empty square in the top 2x2 squares of an estate
      * to display the characters initial.
      *
@@ -175,5 +184,9 @@ public class Character {
      */
     public HobbyDetectives.PlayerName getName() {
         return name;
+    }
+
+    public String toString(){
+        return name.name();
     }
 }

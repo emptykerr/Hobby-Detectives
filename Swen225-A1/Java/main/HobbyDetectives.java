@@ -321,7 +321,12 @@ public class HobbyDetectives {
 		Collections.shuffle(allEstates);
 
 		for (int i = 0; i < allEstates.size(); i++) {
-			allEstates.get(i).addWeapon(allWeapons.get(i));
+			allEstates.get(i).setWeapon(allWeapons.get(i));
+			allEstates.get(i).getWeaponSquare().setWeapon(allWeapons.get(i));
+		}
+
+		for (Estate e : allEstates) {
+			e.getWeapon().setEstate(e);
 		}
 	}
 
@@ -417,6 +422,15 @@ public class HobbyDetectives {
 	 */
 	public static List<Player> getPlayers() {
 		return allPlayers;
+	}
+
+	/**
+	 * Returns all the weapons in the game
+	 *
+	 * @return
+	 */
+	public static List<Weapon> getWeapons() {
+		return allWeapons;
 	}
 
 	/**

@@ -11,12 +11,28 @@ public class Square {
 	private int x;
 	private int y;
 	private Estate estate;
+	private Weapon weapon;
 	private boolean blocked = false;
 
 	public Square(int x, int y) {
 		this.x = x;
 		this.y = y;
 		estate = null;
+		weapon = null;
+	}
+
+	/**
+	 * Gets the weapon for this square
+	 */
+	public Weapon getWeapon() {
+		return weapon;
+	}
+
+	/**
+	 * Sets whether the square has a weapon
+	 */
+	public void setWeapon(Weapon w) {
+		weapon = w;
 	}
 
 	/**
@@ -122,7 +138,7 @@ public class Square {
 //					}
 					return new Color(48, 69, 41);
 				} else {
-					return new Color(209, 192, 168); // biege background
+					return new Color(209, 192, 168); // beige background
 				}
 			}
 		}
@@ -184,6 +200,10 @@ public class Square {
 	}
 
 	public String toString(){
-		return "Square\n" + "X: " + x + "Y: " + y + "\n" + "Estate: " + estate + "\n" + "Character: " + character;
+		String result = "Square Information\n" + "X: " + (x+1) + " Y: " + (y+1);
+		if (estate != null){ result += "\nEstate: " + estate; }
+		if (character != null){ result += "\nCharacter: " + character; }
+		if (weapon != null){ result += "\nWeapon: " + weapon.getName(); }
+		return result;
 	}
 }

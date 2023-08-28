@@ -47,12 +47,19 @@ public class Estate {
     }
 
     /**
-     * Adds a weapon to the estate
+     * Gets the designated square to put the weapon on
+     */
+    public Square getWeaponSquare() {
+        return Board.getSquare(x + width - 2, y + height - 2);
+    }
+
+    /**
+     * Sets the weapon in the estate
      *
      * @param w
      */
 
-    public void addWeapon(Weapon w) {
+    public void setWeapon(Weapon w) {
         weapon = w;
     }
 
@@ -104,5 +111,9 @@ public class Estate {
      */
     public int getY() {
         return y;
+    }
+
+    public String toString(){
+        return name;
     }
 }

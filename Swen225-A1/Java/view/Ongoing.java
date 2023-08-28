@@ -7,7 +7,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 public class Ongoing extends JFrame {
 
@@ -113,8 +116,7 @@ public class Ongoing extends JFrame {
 
         background.setPreferredSize(new Dimension(1920, 1080));
 
-        jframe.add(background, BorderLayout.CENTER);
-
+//         jframe.setContentPane(background);
 
 
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -143,11 +145,12 @@ public class Ongoing extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
-                System.out.println("Mouse Released at (" + x + ", " + y + ")");
-                int[] coords = pixelCoordToCoord(x, y, playerPanel);
+                int[] coords = pixelCoordToCoord(x, y, mainPanel);
                 int squareX = coords[0];
                 int squareY = coords[1];
-                printToUI(Board.getSquare(squareX, squareY).toString());
+                if (squareX >= 0 && squareX < Board.getLength() && squareY >=0 && squareY < Board.getLength()){
+                    printToUI(Board.getSquare(squareX, squareY).toString());
+                }
             }
         });
 
@@ -216,6 +219,7 @@ public class Ongoing extends JFrame {
             } else {
                 currentPlayer.doBoardMove(direction);
             }
+
             displayMessage.setText(game.getCurrentPlayer().getActionPerformed());
             movesLeft.setText("Moves left: " + game.getCurrentPlayer().getMoves());
             repaint();
@@ -258,13 +262,6 @@ public class Ongoing extends JFrame {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
 
-
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-        });
-
         int height = panel.getHeight();
         int width = panel.getWidth();
 
@@ -296,7 +293,9 @@ public class Ongoing extends JFrame {
                     g2d.setColor(Color.BLACK);
                     g2d.drawRect(clampedValue * x + distanceFromLeftBorder, clampedValue * y + distanceFromTopBorder, clampedValue, clampedValue);
                 }
-
+                if (square.getWeapon() != null) {
+                   drawWeapon(mainPanel,g, clampedValue,  square.getWeapon().getName(), square.getEstate(),  x * clampedValue + distanceFromLeftBorder, y * clampedValue + distanceFromTopBorder);
+                }
             }
         }
         g2d.setStroke(new BasicStroke(10));
@@ -304,28 +303,28 @@ public class Ongoing extends JFrame {
         repaint();
     }
 
-    /**
-     * Converts game coordinates to corresponding GUI pixel coordinates
-     * @param panel main game panel
-     * @return the corresponding pixel coordinates ([0] is x [1] is y)
-     */
-    public int[] coordToPixelCoord(int x, int y, JPanel panel){
-        int height = panel.getHeight();
-        int width = panel.getWidth();
-
-        int size = (int) (height / (Board.getLength() + 6));
-        int distanceFromLeftBorder = width/2 - (size*Board.getLength()/2);
-        int distanceFromTopBorder = height/2 - (size*Board.getLength()/2);
-
-        int pixelX = distanceFromLeftBorder + x*size;
-        int pixelY = distanceFromTopBorder + y*size;
-
-        int[] pixelCoords = new int[2];
-        pixelCoords[0] = pixelX;
-        pixelCoords[1] = pixelY;
-
-        return pixelCoords;
-    }
+//    /**
+//     * Converts game coordinates to corresponding GUI pixel coordinates
+//     * @param panel main game panel
+//     * @return the corresponding pixel coordinates ([0] is x [1] is y)
+//     */
+//    public int[] coordToPixelCoord(int x, int y, JPanel panel){
+//        int height = panel.getHeight();
+//        int width = panel.getWidth();
+//
+//        int size = (int) (height / (Board.getLength() + 6));
+//        int distanceFromLeftBorder = width/2 - (size*Board.getLength()/2);
+//        int distanceFromTopBorder = height/2 - (size*Board.getLength()/2);
+//
+//        int pixelX = distanceFromLeftBorder + x*size;
+//        int pixelY = distanceFromTopBorder + y*size;
+//
+//        int[] pixelCoords = new int[2];
+//        pixelCoords[0] = pixelX;
+//        pixelCoords[1] = pixelY;
+//
+//        return pixelCoords;
+//    }
 
     /**
      * Converts GUI pixel coordinates to game coordinates
@@ -336,7 +335,11 @@ public class Ongoing extends JFrame {
         int height = panel.getHeight();
         int width = panel.getWidth();
 
-        int size = (int) (height / (Board.getLength() + 6));
+        int widthSize = (int) (width / (Board.getLength() + 6));
+        int heightSize = (int) (height / (Board.getLength() + 6));
+
+        int size = Math.max(0, Math.min(widthSize, heightSize));
+
         int distanceFromLeftBorder = width/2 - (size*Board.getLength()/2);
         int distanceFromTopBorder = height/2 - (size*Board.getLength()/2);
 
@@ -380,14 +383,12 @@ public class Ongoing extends JFrame {
         constraints.gridy = 1;
         constraints.weighty = 0.35;
         leftPanel.add(this.displayMessage, constraints);
-        JLabel tip = new JLabel("Use W, A, S and D to move (note: you need to have rolled the dice first!)");
-        leftPanel.add(tip);
 
         //Player actions label
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.weighty = 0.1;
-        leftPanel.add(new JLabel("Player Actions"), constraints);
+        leftPanel.add(new JLabel("Use W, A, S and D to move (note: you need to have rolled the dice first!)"), constraints);
         JPanel playerActions = new JPanel(new FlowLayout());
 
         JButton endTurn = new JButton("End Turn");
@@ -447,11 +448,8 @@ public class Ongoing extends JFrame {
 
         avatar.setPreferredSize(new Dimension(420, 420));
 
-
-
         wholePanel.add(leftPanel, BorderLayout.SOUTH);
         wholePanel.add(avatar, BorderLayout.NORTH);
-
 
         this.repaint();
         return wholePanel;
@@ -475,6 +473,17 @@ public class Ongoing extends JFrame {
         repaint();
     }
 
+    public void drawWeapon(JPanel panel, Graphics g, int size, String weapon, Estate e, int x, int y){
+        super.paint(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        int weaponSize = size;
+
+        g2d.drawImage((LoadSave.getSpriteAtlas(weapon +".png")).getScaledInstance(weaponSize, weaponSize, Image.SCALE_SMOOTH),
+                x ,
+                y ,  this);
+        repaint();
+    }
     /**
      * Draws current players cards in their hand on the screen
      * @param panel to draw cards in
@@ -546,13 +555,4 @@ public class Ongoing extends JFrame {
         infoPanel.revalidate();
         infoPanel.repaint();
     }
-
-
-
-
-
 }
-
-
-
-
