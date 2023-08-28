@@ -108,9 +108,9 @@ public class Square {
 			return character.getColour();
 		} else {
 			if (wall) {
-				return Color.BLACK;
+				return new Color(74, 50, 34); // dark brown
 			} else if (unreachableSquare) {
-				return Color.LIGHT_GRAY;
+				return new Color(85, 85, 85);
 			} else if (door) {
 				return HobbyDetectives.BROWN;
 			} else {
@@ -120,9 +120,9 @@ public class Square {
 //					} else {
 //						System.out.print(" ");
 //					}
-					return HobbyDetectives.CYAN_BOLD;
+					return new Color(48, 69, 41);
 				} else {
-					return new Color(209, 192, 168);
+					return new Color(209, 192, 168); // biege background
 				}
 			}
 		}
@@ -181,5 +181,9 @@ public class Square {
 
 	public Estate getEstate() {
 		return estate;
+	}
+
+	public String toString(){
+		return "Square\n" + "X: " + x + "Y: " + y + "\n" + "Estate: " + estate + "\n" + "Character: " + character;
 	}
 }

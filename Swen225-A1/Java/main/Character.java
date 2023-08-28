@@ -1,5 +1,4 @@
 package main;
-
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,16 +32,17 @@ public class Character {
             this.square.removeCharacter();
             setSquare(findEmptySquarePlayer(squareToMove));
             this.square.addCharacter(this);
+
             return true;
         }
+
         // instead of setting it to x+1 y+1 check if a character is there, then add x+2/y+2 in a 2x2 square
         //until there is room.
 
         if (squareToMove.getCharacter() != null || squareToMove.isBlocked() || visitedSquares.contains(squareToMove)) {
             if (visitedSquares.contains(squareToMove)) {
-                System.out.println("You have already visited this square");
-            }
 
+            }
             return false;
         }
 
@@ -87,34 +87,33 @@ public class Character {
         return null;
     }
 
-
     /**
      * Steps the character (up, down, left or right) depending on string parameter.
      *
      * @param direction which direction to step
      * @return the square that has been stepped to. Will be null if the step is not allowed
      */
-    public Square step(String direction) {
+    public Square step(char direction) {
         Square newSquare = switch (direction) {
-            case "U" -> {
+            case 'W' -> {
                 if (square.getY() != 0) {
                     yield Board.getSquare(square.getX(), square.getY() - 1);
                 }
                 yield null;
             }
-            case "R" -> {
+            case 'D' -> {
                 if (square.getX() != Board.getLength() - 1) {
                     yield Board.getSquare(square.getX() + 1, square.getY());
                 }
                 yield null;
             }
-            case "D" -> {
+            case 'S' -> {
                 if (square.getY() != Board.getLength() - 1) {
                     yield Board.getSquare(square.getX(), square.getY() + 1);
                 }
                 yield null;
             }
-            case "L" -> {
+            case 'A' -> {
                 if (square.getX() != 0) {
                     yield Board.getSquare(square.getX() - 1, square.getY());
                 }
@@ -150,13 +149,13 @@ public class Character {
         return square;
     }
 
-
     /**
      * Sets the characters current square
      *
      * @param square
      */
     public void setSquare(Square square) {
+        this.square.removeCharacter();
         this.square = square;
     }
 

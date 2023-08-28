@@ -1,7 +1,11 @@
 package main;
 
+import controller.ChecklistPanel;
 import view.Ongoing;
 
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.security.Key;
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -14,22 +18,28 @@ import java.util.stream.Stream;
 public class Player {
     private final Character character;
     private final List<Card> hand;
-    private final Board board;
     private HobbyDetectives game;
+    private Set<Square> visited = new HashSet<>();
+    private int moves = 0;
 
-    
-    private Ongoing ongoingView;
+    private static Ongoing ongoingView;
 
     private boolean eliminated = false;
     private boolean won = false;
+    private boolean dieRolled = false;
+    private boolean guessMade = false;
+    private boolean solveAttempted = false;
 
     private String name;
     private Player playerChosen = null;
 
-    public Player(String name, Character c, Board b, HobbyDetectives g) {
+    private String actionPerformed = "";
+
+    private ChecklistPanel checklist = new ChecklistPanel();
+
+    public Player(String name, Character c, HobbyDetectives g) {
         this.name = name;
         character = c;
-        board = b;
         game = g;
         hand = new ArrayList<>();
     }
@@ -52,7 +62,6 @@ public class Player {
     public Card reveal(Guess guess) {
         List<Card> guessOverlap = new ArrayList<>();
         playerChosen = null;
-        int cardNum;
 
         for (Player p : HobbyDetectives.getOrderedPlayers(HobbyDetectives.getPlayers(), this)) {
             if (!p.character.getName().equals(this.character.getName())) {
@@ -65,39 +74,23 @@ public class Player {
                 if (!guessOverlap.isEmpty()) {
                     break;
                 }
-                System.out.println(p.character.getName() + " cannot show");
+                ongoingView.printToUI(p.character.getName() + " cannot show");
             }
         }
 
         if (guessOverlap.isEmpty()) {
             return null;
         } else {
-            System.out.println("Pass the tablet to " + playerChosen.character.getName() + " you'll have 10 seconds");
-            for (int i = 10; i >= 0; i--) {
-                try {
-                    Thread.sleep(1000);
-                    System.out.println(i);
-                } catch (InterruptedException ie) {
-                    System.out.println("Error: " + ie);
+            ongoingView.printToUI("Pass the tablet to " + playerChosen.character.getName());
+            ongoingView.printToUI("Please enter the card you would like to reveal");
+            String revealCardName = ongoingView.askCardDropdown(guessOverlap.stream().map(c -> c.getCardName()).toArray());
+            Card result = null;
+            for (Card c : game.getAllCards()){
+                if (c.getCardName().equals(revealCardName)) {
+                    result = c;
                 }
             }
-
-            System.out.println("Please enter the number corresponding to the card you would like to reveal: ");
-            for (int i = 0; i < guessOverlap.size(); i++) {
-                System.out.println(i + ": " + guessOverlap.get(i).getCardName());
-            }
-
-            while (true) {
-                Scanner in = new Scanner(System.in);
-                if (in.hasNextInt()) {
-                    cardNum = in.nextInt();
-                    if (cardNum >= 0 && cardNum < guessOverlap.size()) {
-                        break;
-                    }
-                }
-                System.out.println("Please enter a valid number");
-            }
-            return guessOverlap.get(cardNum);
+            return result;
         }
     }
 
@@ -120,183 +113,89 @@ public class Player {
         return eliminated;
     }
 
-
-    /**
-     * Performs the players turn:
-     * Each turn the player will
-     * roll 2 die
-     * Prompt the player for a direction
-     * While the player still has moves left(die value sum)
-     * Move the player in the prompted direction
-     * Check if the player has entered an estate
-     * Offer them to guess or solve
-     * Run the required methods
-     */
-    public void doTurn() {
-        ongoingView = game.getOngoingView();
-        if (eliminated) {
-            System.out.println(character.getName() + " is eliminated");
-            ongoingView.printToUI(character.getName() + " is eliminated");
-            System.out.println("Skipping turn...");
-            return;
-        }
-
-        System.out.println("It is " + getName() + "'s turn");
-        ongoingView.printToUI("It is " + getName() + "'s turn");
-        doMove();
-
-        while (true) {
-            if (eliminated) {
-                break;
-            }
-            System.out.println("Would you like to make a solve attempt? (Y/N)");
-            //Scanner s = new Scanner(System.in);
-            //String ans = s.nextLine().toUpperCase();
-            boolean solveAttempt = ongoingView.askSolveAttempt(this);
-            if (solveAttempt) {
-                if (doSolveAttempt()) {
-                    System.out.println("You solved correctly!");
-                    ongoingView.printToUI("You solved correctly!");
-                    won = true;
-                } else {
-                    System.out.println("\n----------------------------------------");
-                    System.out.println("You solved incorrectly");
-                    System.out.println("You can no longer guess or solve the murder, but you can still refute guesses.");
-                    System.out.println("----------------------------------------\n");
-                    eliminated = true;
-                    System.out.println("Press enter to continue");
-                }
-                break;
-            } else {
-                break;
-            }
-        }
-        // Turn over
-    }
-
-    /**
-     * Performs the movement of the player.
-     * Checks if the player is in an estate when their turn starts, and offers them
-     * to leave the said estate, or continue to make a guess.
-     */
-    public void doMove() {
-        if (character.getSquare().getEstate() != null) {
-            while (true) {
-                //System.out.println("Would you like to leave the estate? (Y/N)");
-                //Scanner s = new Scanner(System.in);
-                //String ans = s.nextLine().toUpperCase();
-                boolean leaveEstate = ongoingView.askLeaveEstate(this);
-                if (leaveEstate) {
-                    character.getSquare().removeCharacter();
-                    moveOutOfEstate();
-                    return;
-                } else {
-                    doGuess();
-                    return;
-                }
-            }
-        } else {
-            doBoardMove();
-        }
-    }
-
     /**
      * Moves the player out of the estate, checks every door
      * the estate has, and offers the player to leave
      * through one of the doors. Teleports the player to the chosen
      * door exit.
      */
-    private void moveOutOfEstate() {
-        Estate currentEstate = character.getSquare().getEstate();
-        System.out.println("Which door would you like to leave through?");
-        System.out.println("There are " + currentEstate.doors.size() + " doors:");
-
-        for (Map.Entry door : currentEstate.doors.entrySet()) {
-            System.out.println(door.getValue() + " door");
-        }
-
-        while (character.getSquare().getEstate() != null) {
-            System.out.println("Enter 'U', 'D', 'L', or 'R' to move");
-            Scanner in = new Scanner(System.in);
-            String direction = ongoingView.askDoorDirection(this);
-
-            String moveDirection = switch (direction) {
-                case "U" -> "Top";
-                case "R" -> "Right";
-                case "D" -> "Bottom";
-                case "L" -> "Left";
-                default -> "";
+    public void moveOutOfEstate(char pressed) {
+        if (moves > 0) {
+            Estate e = character.getSquare().getEstate();
+            String moveDirection = switch (pressed) {
+                case 'W' -> "Top";
+                case 'A' -> "Left";
+                case 'S' -> "Bottom";
+                case 'D' -> "Right";
+                default -> throw new Error("Invalid move direction");
             };
 
-            for (Map.Entry door : currentEstate.doors.entrySet()) {
+            // teleport the player to the door
+            for (Map.Entry door : e.doors.entrySet()) {
                 if (door.getValue().equals(moveDirection)) {
                     character.setSquare((Square) door.getKey());
                 }
             }
 
-            if (character.step(direction) != null) {
-                board.drawToScreen();
-                System.out.println("You exited through the " + moveDirection + " door");
+            if (character.step(pressed) != null) {
+                moves--;
+                actionPerformed = "You exited through the " + moveDirection + " door";
+
                 ongoingView.printToUI("You exited through the " + moveDirection + " door");
-                doBoardMove();
-                break;
-            } else {
-                System.out.println("There is no door there or the door is blocked. Try again");
             }
+            ongoingView.updateGrid();
+        }
+    }
+
+    /**
+     * moves the characters on the board
+     * @param pressed the direction the user has chosen to go
+     */
+    public void doBoardMove(char pressed) {
+        if (moves > 0) {
+            // pressed is either W A S or D
+            Square res = character.step(pressed);
+
+            if (res != null) {
+                Estate e = character.getSquare().getEstate();
+                if (e != null) {
+                    // entered an estate, moving is over
+                    ongoingView.updateGrid();
+                    character.moveCharacterIntoEstate(e);
+                    moves = 0;
+                    doGuess();
+                } else {
+                    moves--;
+                }
+            }
+            ongoingView.updateGrid();
         }
     }
 
     /**
      * Gives the player a move value from two dice rolls.
-     * Perform the move on the game board.
-     * Displays the information of the entered estate, including its name, and its weapon.
      */
-    private void doBoardMove() {
-        int die1 = Die.roll();
-        int die2 = Die.roll();
-        int moves = die1 + die2;
-        System.out.println("You have " + this.getHand().size() + " cards");
-        ongoingView.printToUI("You have " + this.getHand().size() + " cards");
-        for (Card card : this.getHand()) {
-            System.out.println(card.getClass().toString().substring(card.getClass().toString().lastIndexOf(" ") + 1) + ": " + card.getCardName());
+    public void doDieRoll() {
+        if (!dieRolled) {
+            int die1 = Die.roll();
+            int die2 = Die.roll();
+            moves = die1 + die2;
+            actionPerformed = "You rolled a " + die1 + " and " + die2 + " for a total of " + moves;
+            ongoingView.printToUI("You rolled a " + die1 + " and " + die2 + " for a total of " + moves);
+            dieRolled = true;
+        } else {
+            ongoingView.printToUI("You have already rolled!");
         }
-        System.out.println("\nYou rolled a " + die1 + " and " + die2 + " for a total of " + moves);
-        System.out.println("Moves left: " + moves);
-        Set<Square> visited = new HashSet<>();
-        while (moves > 0) {
-            String askPlayerDirection = "Where would you like to move to? (Enter U, R, D or L to move): ";
-            // Change what direction options are available depending on walls
+    }
 
-            System.out.println(askPlayerDirection);
-            Scanner in = new Scanner(System.in);
-            String direction = in.nextLine().toUpperCase();
-
-            String moveDirection = switch (direction) {
-                case "U" -> "Up";
-                case "R" -> "Right";
-                case "D" -> "Down";
-                case "L" -> "Left";
-                default -> "";
-            };
-
-            if (character.step(direction) != null) { // making sure they put a correct input and the square they're going to does not have a player in it
-                board.drawToScreen();
-                if (character.getSquare().getEstate() != null) {
-                    moves = 0;
-                    System.out.println("\n--------------------------------------------");
-                    System.out.println("You have entered " + character.getSquare().getEstate().getName());
-                    System.out.println("It contains the weapon: " + character.getSquare().getEstate().getWeapon().getName());
-                    System.out.println("--------------------------------------------\n");
-
-                    doGuess();
-                } else {
-                    moves--;
-                    System.out.println("You moved " + moveDirection + ". Moves left: " + moves);
-                }
-            } else {
-                System.out.println("Invalid direction, please try again.");
-            }
-        }
+    /**
+     * Resets all bool player values for next turn
+     */
+    public void reset(){
+        moves = 0;
+        dieRolled = false;
+        guessMade = false;
+        solveAttempted = false;
     }
 
     /**
@@ -304,23 +203,24 @@ public class Player {
      * Checks if each player can refute
      */
     public void doGuess() {
+        if (guessMade) {
+            ongoingView.printToUI("You have already made a guess!");
+            return;
+        }
+        if (character.getSquare().getEstate() == null) {
+            ongoingView.printToUI("You must be in an estate to guess");
+            return;
+        }
+
         Card card = reveal(inputGuess(character.getSquare().getEstate()));
 
         if (card != null) {
-            System.out.println("Pass the tablet back to " + character.getName() + ". You'll have 10 seconds");
-            for (int i = 10; i >= 0; i--) {
-                try {
-                    Thread.sleep(1000);
-                    System.out.println(i);
-                } catch (InterruptedException ie) {
-                    System.out.println("Error: " + ie);
-                }
-            }
-
-            System.out.println("The card shown to you by " + playerChosen.character.getName() + " is: " + card.getCardName());
+            ongoingView.printToUI("Pass the tablet back to " + character.getName());
+            ongoingView.printToUI("The card shown to you by " + playerChosen.character.getName() + " is: " + card.getCardName());
         } else {
-            System.out.println("No players could show you any cards");
+            ongoingView.printToUI("No players could show you any cards");
         }
+        guessMade = true;
     }
 
     /**
@@ -328,10 +228,22 @@ public class Player {
      *
      * @return true for the guess was correct or false for not
      */
-    public boolean doSolveAttempt() {
+    public void doSolveAttempt() {
+        if (solveAttempted) {
+            ongoingView.printToUI("You have already made a solve attempt this turn!");
+            return;
+        }
         Guess guess = inputGuess(null);
+        if (guess.equals(HobbyDetectives.getSolution())) {
+            won = true;
+            ongoingView.printToUI("You solved correctly! You are the winner!");
 
-        return guess.equals(HobbyDetectives.getSolution());
+            game.end();
+        } else {
+            eliminated = true;
+            ongoingView.printToUI("Unfortunately, you guessed incorrectly. You are eliminated. However, you must still refute guesses");
+        }
+        solveAttempted = true;
     }
 
     /**
@@ -351,6 +263,7 @@ public class Player {
         CharacterCard characterCard = selectCharacter();
         WeaponCard weaponCard = selectWeapon();
 
+
         return new Guess(characterCard, weaponCard, estateCard);
     }
 
@@ -360,21 +273,8 @@ public class Player {
      * @return the card selected
      */
     private EstateCard selectEstate() {
-        System.out.println("Please input the estate name that you want to interrogate out of: ");
-        printEnumValues(HobbyDetectives.EstateName.values());
-
-        EstateCard estateCard;
-        while (true) {
-            String input = getUserInput();
-            HobbyDetectives.EstateName estateName = HobbyDetectives.EstateName.estateNameMap.get(input.toLowerCase());
-            if (estateName != null) {
-                estateCard = HobbyDetectives.estateMap.get(estateName.toString());
-                break;
-            } else {
-                System.out.println("That estate does not exist. Please try again");
-            }
-        }
-
+        String estateName = ongoingView.askCardDropdown(HobbyDetectives.estateMap.keySet().toArray());
+        EstateCard estateCard = HobbyDetectives.estateMap.get(estateName);
         return estateCard;
     }
 
@@ -384,32 +284,15 @@ public class Player {
      * @return the card selected
      */
     private CharacterCard selectCharacter() {
-        System.out.println("Please input the character name that you want to interrogate out of: ");
-        printEnumValues(HobbyDetectives.PlayerName.values());
+        String characterName = ongoingView.askCardDropdown(HobbyDetectives.characterMap.keySet().toArray());
+        CharacterCard characterCard = HobbyDetectives.characterMap.get(characterName);
 
-        CharacterCard characterCard;
-        while (true) {
-            String input = getUserInput();
-            HobbyDetectives.PlayerName characterName = HobbyDetectives.PlayerName.playerNameMap.get(input.toLowerCase());
-
-            if (characterName != null) {
-                characterCard = HobbyDetectives.characterMap.get(characterName.toString());
-                if (character.getSquare().getEstate() == null) break;
-                System.out.println("\n---------------------------------------------------");
-                System.out.println("Bringing " + characterName + " to the estate for interrogating");
-                System.out.println("---------------------------------------------------\n");
-
-                //for each player, find the character that matches the guessed character, and move them into the current estate
-                for (Player p : HobbyDetectives.getPlayers()) {
-                    String selectedCharacter = characterCard.getCardName();
-                    String characterFromList = p.getCharacter().getName().name();
-                    if (selectedCharacter.equals(characterFromList) && p.getCharacter().getSquare().getEstate() != character.getSquare().getEstate()) {
-                        p.getCharacter().moveCharacterIntoEstate(character.getSquare().getEstate());
-                    }
-                }
-                break;
-            } else {
-                System.out.println("That character does not exist. Please try again");
+        //for each player, find the character that matches the guessed character, and move them into the current estate
+        for (Player p : HobbyDetectives.getPlayers()) {
+            String selectedCharacter = characterCard.getCardName();
+            String characterFromList = p.getCharacter().getName().name();
+            if (selectedCharacter.equals(characterFromList) && p.getCharacter().getSquare().getEstate() != character.getSquare().getEstate()) {
+                p.getCharacter().moveCharacterIntoEstate(character.getSquare().getEstate());
             }
         }
 
@@ -422,39 +305,9 @@ public class Player {
      * @return the card selected
      */
     private WeaponCard selectWeapon() {
-        System.out.println("Please input the weapon name that you want to interrogate out of: ");
-        printEnumValues(HobbyDetectives.WeaponName.values());
-
-        WeaponCard weaponCard;
-        while (true) {
-            String input = getUserInput();
-            HobbyDetectives.WeaponName weaponName = HobbyDetectives.WeaponName.weaponNameMap.get(input.toLowerCase());
-            if (weaponName != null) {
-                weaponCard = HobbyDetectives.weaponMap.get(weaponName.toString());
-                break;
-            } else {
-                System.out.println("That weapon does not exist. Please try again");
-            }
-        }
-
+        String weaponName = ongoingView.askCardDropdown(HobbyDetectives.weaponMap.keySet().toArray());
+        WeaponCard weaponCard = HobbyDetectives.weaponMap.get(weaponName);
         return weaponCard;
-    }
-
-    /**
-     * Helper method to print the cards to choose from, from the enum values.
-     */
-    private void printEnumValues(Enum[] values) {
-        Arrays.stream(values).forEach(c -> System.out.println(c.toString()));
-    }
-
-    /**
-     * Creates a scanner to be used in the guessing methods
-     *
-     * @return the inputted value from the player
-     */
-    private String getUserInput() {
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
     }
 
     /**
@@ -476,6 +329,14 @@ public class Player {
     }
 
     /**
+     * Sets the ongoing view
+     * @param ong ongoing view
+     */
+    public static void setOngoingView(Ongoing ong) {
+        ongoingView = ong;
+    }
+
+    /**
      * Get the character that belongs to the player
      *
      * @return the character object
@@ -483,4 +344,30 @@ public class Player {
     public Character getCharacter() {
         return character;
     }
+
+    /**
+     * Get moves for this player
+     * @return moves
+     */
+    public int getMoves(){
+        return moves;
+    }
+
+    /**
+     * get action preformed by this player
+     * @return action preformed
+     */
+    public String getActionPerformed(){
+        return actionPerformed;
+    }
+
+
+    public void setChecklistSelected(){
+
+    }
+
+    public ChecklistPanel getChecklist(){
+        return this.checklist;
+    }
+
 }

@@ -28,15 +28,6 @@ public class LoadSave {
     public static final String BROOM = "broom.png";
     public static final String SCISSORS = "scissors.png";
 
-
-
-
-
-
-
-
-
-
     public static BufferedImage getSpriteAtlas(String fileName) {
         BufferedImage img = null;
         InputStream is = LoadSave.class.getResourceAsStream("/resources/" + fileName);
