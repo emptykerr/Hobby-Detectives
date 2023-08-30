@@ -1,6 +1,6 @@
 # Hobby Detectives - Java-based Cluedo-Inspired Game
 
-![Hobby Detectives Logo](/images/logo.png)
+![Hobby Detectives Logo](logo.png)
 
 Hobby Detectives is a group project that brings the classic mystery-solving fun of Cluedo to the digital world. Built entirely in Java, this game features both text-based and GUI interfaces using JSwing, providing players with an engaging and interactive gaming experience. Through the implementation of software design principles such as CRC cards, UML diagrams, state diagrams, and MVC architecture, Hobby Detectives showcases a well-structured and thoughtfully designed codebase.
 
@@ -32,10 +32,10 @@ In Hobby Detectives, players step into the shoes of amateur sleuths trying to so
 
 ## Screenshots
 
-![Screenshot 1](/images/screenshot1.png)
+![Screenshot 1](screenshot1.png)
 *Figure 1: Text-based interface showcasing gameplay.*
 
-![Screenshot 2](/images/screenshot2.png)
+![Screenshot 2](screenshot2.png)
 *Figure 2: GUI interface providing a visual representation of the game board.*
 
 ## Installation and Usage
