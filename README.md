@@ -32,10 +32,10 @@ In Hobby Detectives, players step into the shoes of amateur sleuths trying to so
 
 ## Screenshots
 
-![Screenshot 1](screenshot1.png)
+![Screenshot 1](screenshot1.jpg)
 *Figure 1: Text-based interface showcasing gameplay.*
 
-![Screenshot 2](screenshot2.png)
+![Screenshot 2](screenshot2.jpg)
 *Figure 2: GUI interface providing a visual representation of the game board.*
 
 ## Installation and Usage
