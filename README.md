@@ -59,7 +59,7 @@ Hobby Detectives demonstrates the effective application of several software desi
 - **MVC Architecture:** The Model-View-Controller architecture was followed to separate the game's logic (Model), user interface (View), and user interactions (Controller), facilitating modularity and maintainability.
 
 ## Contributors
-
+- Emptykerr ([@emptykerr](https://github.com/emptykerr))
 - Tokeley ([@tokeley](https://github.com/tokeley))
 - SlazengerV100 ([@slazengerv100](https://github.com/slazengerv100))
 - MathiasSCode ([@mathiasscode](https://github.com/mathiasscode))
